@@ -47,7 +47,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
   const pageNumbers = generatePageNumbers()
 
   return (
-    <nav className="flex items-center justify-center space-x-2 mt-8">
+    <nav className="flex items-center justify-center space-x-4 mt-8">
       <Button
         variant="outline"
         size="sm"
@@ -58,25 +58,6 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         <ChevronLeft className="h-4 w-4" />
         Previous
       </Button>
-
-      <div className="flex space-x-1">
-        {pageNumbers.map((page, index) => (
-          <Button
-            key={index}
-            variant={page === currentPage ? "default" : "outline"}
-            size="sm"
-            onClick={() => typeof page === 'number' && onPageChange(page)}
-            disabled={page === '...'}
-            className={
-              page === currentPage
-                ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                : "hover:bg-accent hover:text-accent-foreground"
-            }
-          >
-            {page === '...' ? <MoreHorizontal className="h-4 w-4" /> : page}
-          </Button>
-        ))}
-      </div>
 
       <Button
         variant="outline"

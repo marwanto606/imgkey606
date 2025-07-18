@@ -64,16 +64,12 @@ const Index = () => {
         {/* Hero Section */}
         <section className="text-center py-12 mb-12">
           <div className="max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent">
               Discover Amazing Stock Images
-            </h1>
+            </h2>
             <p className="text-xl text-muted-foreground mb-8">
               Browse through thousands of high-quality stock photos from talented creators
             </p>
-            <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
-              <Images className="h-4 w-4" />
-              <span>Powered by ImgKey606</span>
-            </div>
           </div>
         </section>
 
@@ -99,14 +95,6 @@ const Index = () => {
         {/* Images Grid */}
         {!isLoading && !error && images.length > 0 && (
           <>
-            <div className="mb-6">
-              <h2 className="text-2xl font-semibold mb-2">Stock Images</h2>
-              <p className="text-muted-foreground">
-                Showing {images.length} of {data?.total_items || 0} images
-                {data && ` • Page ${data.search_page} of ${data.num_pages}`}
-              </p>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {images.map((image) => (
                 <ImageCard key={image.content_id} image={image} />

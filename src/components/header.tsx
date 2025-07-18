@@ -32,17 +32,11 @@ export function Header({ onSearch }: HeaderProps) {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+          <a href="/" className="text-muted-foreground hover:text-foreground transition-colors">
             Home
           </a>
-          <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-            Gallery
-          </a>
-          <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-            Categories
-          </a>
-          <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-            About
+          <a href="https://www.marwanto606.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+            Blog
           </a>
         </nav>
 
@@ -88,17 +82,11 @@ export function Header({ onSearch }: HeaderProps) {
           <div className="container px-4 py-4 space-y-4">
             {/* Mobile Navigation */}
             <nav className="flex flex-col space-y-3">
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="/" className="text-muted-foreground hover:text-foreground transition-colors">
                 Home
               </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                Gallery
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                Categories
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                About
+              <a href="https://www.marwanto606.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                Blog
               </a>
             </nav>
 
