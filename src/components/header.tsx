@@ -25,7 +25,7 @@ export function Header({ onSearch }: HeaderProps) {
         {/* Logo */}
         <div className="flex items-center space-x-2">
           <Camera className="h-8 w-8 text-primary" />
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent">
             ImgKey606
           </h1>
         </div>

@@ -64,7 +64,7 @@ const Index = () => {
         {/* Hero Section */}
         <section className="text-center py-12 mb-12">
           <div className="max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent">
               Discover Amazing Stock Images
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
@@ -145,7 +145,7 @@ const Index = () => {
               <span className="text-lg font-semibold">ImgKey606</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2024 ImgKey606. Discover amazing stock images from talented creators.
+              © {new Date().getFullYear()} ImgKey606. Discover amazing stock images from talented creators.
             </p>
           </div>
         </div>
