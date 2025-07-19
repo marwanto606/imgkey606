@@ -27,14 +27,11 @@ interface ApiResponse {
 }
 
 const fetchImages = async (page: number): Promise<ApiResponse> => {
-  console.log('Fetching images for page:', page)
-  const response = await fetch(`https://st-apis.gallery606.workers.dev/creator?page=${page}`)
+  const response = await fetch(`https://st-apis.gallery606.workers.dev/creator?search_pages=${page}`)
   if (!response.ok) {
     throw new Error('Failed to fetch images')
   }
-  const data = await response.json()
-  console.log('API Response for page', page, ':', data)
-  return data
+  return response.json()
 }
 
 const Index = () => {
@@ -48,7 +45,6 @@ const Index = () => {
   })
 
   const handlePageChange = (page: number) => {
-    console.log('Changing to page:', page)
     setCurrentPage(page)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -59,7 +55,6 @@ const Index = () => {
   }
 
   const images = data ? Object.values(data.items) : []
-  console.log('Current page:', currentPage, 'Total pages:', data?.num_pages, 'Images count:', images.length)
 
   return (
     <div className="min-h-screen bg-background">
