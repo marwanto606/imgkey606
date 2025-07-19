@@ -1,3 +1,4 @@
+
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -47,7 +48,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
   const pageNumbers = generatePageNumbers()
 
   return (
-    <nav className="flex items-center justify-center space-x-4 mt-8">
+    <nav className="flex items-center justify-center space-x-2 mt-8">
       <Button
         variant="outline"
         size="sm"
@@ -58,6 +59,27 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         <ChevronLeft className="h-4 w-4" />
         Previous
       </Button>
+
+      <div className="flex items-center space-x-1">
+        {pageNumbers.map((page, index) => (
+          <div key={index}>
+            {page === '...' ? (
+              <span className="flex h-9 w-9 items-center justify-center">
+                <MoreHorizontal className="h-4 w-4" />
+              </span>
+            ) : (
+              <Button
+                variant={currentPage === page ? "default" : "outline"}
+                size="sm"
+                onClick={() => onPageChange(page as number)}
+                className="h-9 w-9 p-0"
+              >
+                {page}
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
 
       <Button
         variant="outline"
