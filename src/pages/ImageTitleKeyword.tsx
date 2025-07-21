@@ -330,6 +330,14 @@ const ImageTitleKeyword = () => {
                   </p>
                 </CardContent>
               </Card>
+
+              {/* Info */}
+              <Alert>
+                <Sparkles className="h-4 w-4" />
+                <AlertDescription>
+                  Your API key is stored locally in your browser and never shared with our servers.
+                </AlertDescription>
+              </Alert>
             </div>
 
             {/* Right Column - Model Selection & Results */}
@@ -412,14 +420,6 @@ const ImageTitleKeyword = () => {
                   </CardContent>
                 </Card>
               )}
-
-              {/* Info */}
-              <Alert>
-                <Sparkles className="h-4 w-4" />
-                <AlertDescription>
-                  Your API key is stored locally in your browser and never shared with our servers.
-                </AlertDescription>
-              </Alert>
             </div>
           </div>
         </div>
