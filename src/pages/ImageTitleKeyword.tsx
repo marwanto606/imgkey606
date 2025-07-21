@@ -1,5 +1,5 @@
 import { useState, useRef } from "react"
-import { Camera, Upload, Sparkles, ChevronDown } from "lucide-react"
+import { Camera, Upload, Sparkles, ChevronDown, Copy, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -29,6 +29,8 @@ const ImageTitleKeyword = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
+  const [copiedTitle, setCopiedTitle] = useState(false)
+  const [copiedKeywords, setCopiedKeywords] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSearch = (query: string) => {
@@ -38,6 +40,22 @@ const ImageTitleKeyword = () => {
   const handleApiKeyChange = (value: string) => {
     setApiKey(value)
     localStorage.setItem("gemini-api-key", value)
+  }
+
+  const copyToClipboard = async (text: string, type: 'title' | 'keywords') => {
+    try {
+      await navigator.clipboard.writeText(text)
+      if (type === 'title') {
+        setCopiedTitle(true)
+        setTimeout(() => setCopiedTitle(false), 2000)
+      } else {
+        setCopiedKeywords(true)
+        setTimeout(() => setCopiedKeywords(false), 2000)
+      }
+      toast.success(`${type === 'title' ? 'Title' : 'Keywords'} copied to clipboard!`)
+    } catch (err) {
+      toast.error("Failed to copy to clipboard")
+    }
   }
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -122,7 +140,7 @@ const ImageTitleKeyword = () => {
           contents: [{
             parts: [
               {
-                text: "Analyze this image and provide:\n1. A descriptive title (max 100 characters)\n2. Exactly 50 relevant keywords separated by commas\n\nFormat your response as:\nTitle: [your title here]\nKeywords: [keyword1, keyword2, keyword3, ...]"
+                text: "You are a stock content analyst for a leading microstock platform. Analyze this image and generate:\n\n1. A descriptive, SEO-friendly title (10–15 words), written in natural language, optimized for search engines. Include subject, action, setting, and context if visible.\n2. Exactly 50 high-quality keywords or short phrases. Include:\n   - Subject identity (e.g., gender, profession, ethnicity if clear)\n   - Actions, poses, or expressions\n   - Visual style (photo realism, flat lay, vector, minimalistic, etc.)\n   - Mood or emotion\n   - Setting or environment\n   - Technical elements (e.g., close-up, aerial view, backlit)\n   - Commercial use case (e.g., advertisement, website banner, brochure, etc.)\n\nRespond only in the following JSON format:\n\n{\n  \"title\": \"Your SEO-optimized title here\",\n  \"keywords\": [\"keyword1\", \"keyword2\", ..., \"keyword50\"]\n}"
               },
               {
                 inline_data: {
@@ -144,17 +162,37 @@ const ImageTitleKeyword = () => {
       if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
         const text = data.candidates[0].content.parts[0].text
         
-        // Parse the response
-        const titleMatch = text.match(/Title:\s*(.+)/i)
-        const keywordsMatch = text.match(/Keywords:\s*(.+)/i)
-        
-        if (titleMatch && keywordsMatch) {
-          const title = titleMatch[1].trim()
-          const keywords = keywordsMatch[1].split(',').map(k => k.trim()).filter(k => k.length > 0)
-          
-          setResult({ title, keywords })
-          toast.success("Title and keywords generated successfully!")
-        } else {
+        try {
+          // Try to parse as JSON first
+          const jsonMatch = text.match(/\{[\s\S]*\}/)
+          if (jsonMatch) {
+            const parsedResult = JSON.parse(jsonMatch[0])
+            if (parsedResult.title && parsedResult.keywords) {
+              setResult({
+                title: parsedResult.title,
+                keywords: parsedResult.keywords
+              })
+              toast.success("Title and keywords generated successfully!")
+            } else {
+              throw new Error("Invalid JSON structure")
+            }
+          } else {
+            // Fallback to old parsing method
+            const titleMatch = text.match(/Title:\s*(.+)/i)
+            const keywordsMatch = text.match(/Keywords:\s*(.+)/i)
+            
+            if (titleMatch && keywordsMatch) {
+              const title = titleMatch[1].trim()
+              const keywords = keywordsMatch[1].split(',').map(k => k.trim()).filter(k => k.length > 0)
+              
+              setResult({ title, keywords })
+              toast.success("Title and keywords generated successfully!")
+            } else {
+              throw new Error("Failed to parse API response")
+            }
+          }
+        } catch (parseError) {
+          console.error("Parse error:", parseError)
           throw new Error("Failed to parse API response")
         }
       } else {
@@ -186,9 +224,9 @@ const ImageTitleKeyword = () => {
             </div>
           </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Image Upload */}
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Image Upload & API Key */}
+            <div className="space-y-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -263,37 +301,9 @@ const ImageTitleKeyword = () => {
                       </>
                     )}
                   </Button>
-
-                  {/* Results */}
-                  {result && (
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="generated-title">Generated Title</Label>
-                        <Input
-                          id="generated-title"
-                          value={result.title}
-                          readOnly
-                          className="mt-1"
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="generated-keywords">Generated Keywords ({result.keywords.length})</Label>
-                        <Textarea
-                          id="generated-keywords"
-                          value={result.keywords.join(', ')}
-                          readOnly
-                          className="mt-1 min-h-32"
-                        />
-                      </div>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
-            </div>
 
-            {/* Right Column - Settings */}
-            <div className="space-y-6">
               {/* API Key */}
               <Card>
                 <CardHeader>
@@ -320,7 +330,10 @@ const ImageTitleKeyword = () => {
                   </p>
                 </CardContent>
               </Card>
+            </div>
 
+            {/* Right Column - Model Selection & Results */}
+            <div className="space-y-6">
               {/* Model Selection */}
               <Card>
                 <CardHeader>
@@ -341,6 +354,64 @@ const ImageTitleKeyword = () => {
                   </Select>
                 </CardContent>
               </Card>
+
+              {/* Results */}
+              {result && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Generated Results</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <Label htmlFor="generated-title">Generated Title</Label>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(result.title, 'title')}
+                          className="h-8 px-2"
+                        >
+                          {copiedTitle ? (
+                            <Check className="h-3 w-3" />
+                          ) : (
+                            <Copy className="h-3 w-3" />
+                          )}
+                        </Button>
+                      </div>
+                      <Input
+                        id="generated-title"
+                        value={result.title}
+                        readOnly
+                        className="mt-1"
+                      />
+                    </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <Label htmlFor="generated-keywords">Generated Keywords ({result.keywords.length})</Label>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(result.keywords.join(', '), 'keywords')}
+                          className="h-8 px-2"
+                        >
+                          {copiedKeywords ? (
+                            <Check className="h-3 w-3" />
+                          ) : (
+                            <Copy className="h-3 w-3" />
+                          )}
+                        </Button>
+                      </div>
+                      <Textarea
+                        id="generated-keywords"
+                        value={result.keywords.join(', ')}
+                        readOnly
+                        className="mt-1 min-h-32"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Info */}
               <Alert>
