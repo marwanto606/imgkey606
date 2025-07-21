@@ -1,8 +1,14 @@
 import { useState } from "react"
-import { Menu, X, Search, Camera } from "lucide-react"
+import { Menu, X, Search, Camera, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ThemeToggle } from "@/components/theme-toggle"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface HeaderProps {
   onSearch: (query: string) => void
@@ -38,6 +44,21 @@ export function Header({ onSearch }: HeaderProps) {
           <a href="https://www.marwanto606.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
             Blog
           </a>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground transition-colors">
+                Tools
+                <ChevronDown className="h-4 w-4 ml-1" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="bg-background border">
+              <DropdownMenuItem asChild>
+                <a href="/image-title-keyword" className="w-full">
+                  Gen title keyword
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         {/* Search Form */}
@@ -88,6 +109,12 @@ export function Header({ onSearch }: HeaderProps) {
               <a href="https://www.marwanto606.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
                 Blog
               </a>
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-foreground">Tools</p>
+                <a href="/image-title-keyword" className="text-muted-foreground hover:text-foreground transition-colors pl-4">
+                  Gen title keyword
+                </a>
+              </div>
             </nav>
 
             {/* Mobile Search */}
