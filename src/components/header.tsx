@@ -16,6 +16,7 @@ interface HeaderProps {
 
 export function Header({ onSearch }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isToolsOpen, setIsToolsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
   const handleSearch = (e: React.FormEvent) => {
@@ -115,13 +116,23 @@ export function Header({ onSearch }: HeaderProps) {
                 Blog
               </a>
               <div className="space-y-2">
-                <p className="text-sm font-medium text-foreground">Tools</p>
-                <a href="/image-title-keyword" className="text-muted-foreground hover:text-foreground transition-colors pl-4">
-                  Gen title keyword
-                </a>
-                <a href="/image-prompt" className="text-muted-foreground hover:text-foreground transition-colors pl-4">
-                  Gen Image Prompt
-                </a>
+                <button 
+                  onClick={() => setIsToolsOpen(!isToolsOpen)}
+                  className="flex items-center text-sm font-medium text-foreground hover:text-muted-foreground transition-colors"
+                >
+                  Tools
+                  <ChevronDown className={`h-4 w-4 ml-1 transition-transform ${isToolsOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {isToolsOpen && (
+                  <div className="pl-4 space-y-2">
+                    <a href="/image-title-keyword" className="block text-muted-foreground hover:text-foreground transition-colors">
+                      Gen title keyword
+                    </a>
+                    <a href="/image-prompt" className="block text-muted-foreground hover:text-foreground transition-colors">
+                      Gen Image Prompt
+                    </a>
+                  </div>
+                )}
               </div>
             </nav>
 
