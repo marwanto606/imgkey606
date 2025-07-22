@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ImageTitleKeyword from "./pages/ImageTitleKeyword";
+import ImagePrompt from "./pages/ImagePrompt";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/image-title-keyword" element={<ImageTitleKeyword />} />
+            <Route path="/image-prompt" element={<ImagePrompt />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

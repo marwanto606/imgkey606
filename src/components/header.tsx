@@ -57,6 +57,11 @@ export function Header({ onSearch }: HeaderProps) {
                   Gen title keyword
                 </a>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="/image-prompt" className="w-full">
+                  Gen Image Prompt
+                </a>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </nav>
@@ -113,6 +118,9 @@ export function Header({ onSearch }: HeaderProps) {
                 <p className="text-sm font-medium text-foreground">Tools</p>
                 <a href="/image-title-keyword" className="text-muted-foreground hover:text-foreground transition-colors pl-4">
                   Gen title keyword
+                </a>
+                <a href="/image-prompt" className="text-muted-foreground hover:text-foreground transition-colors pl-4">
+                  Gen Image Prompt
                 </a>
               </div>
             </nav>
