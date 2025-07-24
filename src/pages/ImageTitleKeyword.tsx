@@ -9,12 +9,17 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { Header } from "@/components/header"
+import { validateImageFile, validateApiKey, sanitizeErrorMessage, createRateLimiter } from "@/lib/validation"
+import DOMPurify from 'dompurify'
 
 const GEMINI_MODELS = [
   { value: "gemini-1.5-flash-latest", label: "gemini-1.5-flash-latest" },
   { value: "gemini-2.0-flash", label: "gemini-2.0-flash" },
   { value: "gemini-2.5-flash", label: "gemini-2.5-flash" }
 ]
+
+// Rate limiter: 5 requests per minute
+const rateLimiter = createRateLimiter(5, 60 * 1000);
 
 interface AnalysisResult {
   title: string
@@ -79,9 +84,10 @@ const ImageTitleKeyword = () => {
   }
 
   const handleFileSelect = (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      toast.error("Please select an image file")
-      return
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      toast.error(validation.error || "Invalid file");
+      return;
     }
 
     setSelectedImage(file)
@@ -120,9 +126,16 @@ const ImageTitleKeyword = () => {
       return
     }
 
-    if (!apiKey.trim()) {
-      toast.error("Please enter your Gemini API key")
-      return
+    const apiKeyValidation = validateApiKey(apiKey);
+    if (!apiKeyValidation.valid) {
+      toast.error(apiKeyValidation.error || "Invalid API key");
+      return;
+    }
+
+    // Rate limiting
+    if (!rateLimiter('title-keywords')) {
+      toast.error("Too many requests. Please wait before trying again.");
+      return;
     }
 
     setIsLoading(true)
@@ -131,10 +144,12 @@ const ImageTitleKeyword = () => {
     try {
       const imageBase64 = await convertImageToBase64(selectedImage)
       
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'x-goog-api-key': apiKey,
         },
         body: JSON.stringify({
           contents: [{
@@ -154,7 +169,8 @@ const ImageTitleKeyword = () => {
       })
 
       if (!response.ok) {
-        throw new Error(`API request failed: ${response.status}`)
+        const errorText = await response.text();
+        throw new Error(`API request failed: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json()
@@ -169,8 +185,8 @@ const ImageTitleKeyword = () => {
             const parsedResult = JSON.parse(jsonMatch[0])
             if (parsedResult.title && parsedResult.keywords) {
               setResult({
-                title: parsedResult.title,
-                keywords: parsedResult.keywords
+                title: DOMPurify.sanitize(parsedResult.title),
+                keywords: parsedResult.keywords.map((keyword: string) => DOMPurify.sanitize(keyword))
               })
               toast.success("Title and keywords generated successfully!")
             } else {
@@ -182,8 +198,8 @@ const ImageTitleKeyword = () => {
             const keywordsMatch = text.match(/Keywords:\s*(.+)/i)
             
             if (titleMatch && keywordsMatch) {
-              const title = titleMatch[1].trim()
-              const keywords = keywordsMatch[1].split(',').map(k => k.trim()).filter(k => k.length > 0)
+              const title = DOMPurify.sanitize(titleMatch[1].trim())
+              const keywords = keywordsMatch[1].split(',').map(k => DOMPurify.sanitize(k.trim())).filter(k => k.length > 0)
               
               setResult({ title, keywords })
               toast.success("Title and keywords generated successfully!")
@@ -200,7 +216,8 @@ const ImageTitleKeyword = () => {
       }
     } catch (error) {
       console.error('Error generating title and keywords:', error)
-      toast.error("Failed to generate title and keywords. Please check your API key and try again.")
+      const errorMessage = sanitizeErrorMessage(error);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false)
     }
