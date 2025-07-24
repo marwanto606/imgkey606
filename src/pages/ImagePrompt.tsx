@@ -9,17 +9,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { Header } from "@/components/header"
-import { validateImageFile, validateApiKey, sanitizeErrorMessage, createRateLimiter } from "@/lib/validation"
-import DOMPurify from 'dompurify'
 
 const GEMINI_MODELS = [
   { value: "gemini-1.5-flash-latest", label: "gemini-1.5-flash-latest" },
   { value: "gemini-2.0-flash", label: "gemini-2.0-flash" },
   { value: "gemini-2.5-flash", label: "gemini-2.5-flash" }
 ]
-
-// Rate limiter: 5 requests per minute
-const rateLimiter = createRateLimiter(5, 60 * 1000);
 
 const ImagePrompt = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
@@ -73,10 +68,9 @@ const ImagePrompt = () => {
   }
 
   const handleFileSelect = (file: File) => {
-    const validation = validateImageFile(file);
-    if (!validation.valid) {
-      toast.error(validation.error || "Invalid file");
-      return;
+    if (!file.type.startsWith('image/')) {
+      toast.error("Please select an image file")
+      return
     }
 
     setSelectedImage(file)
@@ -115,16 +109,9 @@ const ImagePrompt = () => {
       return
     }
 
-    const apiKeyValidation = validateApiKey(apiKey);
-    if (!apiKeyValidation.valid) {
-      toast.error(apiKeyValidation.error || "Invalid API key");
-      return;
-    }
-
-    // Rate limiting
-    if (!rateLimiter('image-prompt')) {
-      toast.error("Too many requests. Please wait before trying again.");
-      return;
+    if (!apiKey.trim()) {
+      toast.error("Please enter your Gemini API key")
+      return
     }
 
     setIsLoading(true)
@@ -133,12 +120,10 @@ const ImagePrompt = () => {
     try {
       const imageBase64 = await convertImageToBase64(selectedImage)
       
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'x-goog-api-key': apiKey,
         },
         body: JSON.stringify({
           contents: [{
@@ -158,14 +143,13 @@ const ImagePrompt = () => {
       })
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API request failed: ${response.status} - ${errorText}`);
+        throw new Error(`API request failed: ${response.status}`)
       }
 
       const data = await response.json()
       
       if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-        const generatedPrompt = DOMPurify.sanitize(data.candidates[0].content.parts[0].text.trim());
+        const generatedPrompt = data.candidates[0].content.parts[0].text.trim()
         setPrompt(generatedPrompt)
         toast.success("Image prompt generated successfully!")
       } else {
@@ -173,8 +157,7 @@ const ImagePrompt = () => {
       }
     } catch (error) {
       console.error('Error generating image prompt:', error)
-      const errorMessage = sanitizeErrorMessage(error);
-      toast.error(errorMessage);
+      toast.error("Failed to generate image prompt. Please check your API key and try again.")
     } finally {
       setIsLoading(false)
     }
