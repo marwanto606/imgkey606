@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { toast } from "sonner"
 import { Header } from "@/components/header"
+import { BackToTop } from "@/components/back-to-top"
 import { useNavigate } from "react-router-dom"
 
 interface ImageData {
@@ -84,12 +85,14 @@ const ImageInspire = () => {
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   const handleNextPage = () => {
     if (data?.items && data.items.length > 0) {
       setCurrentPage(currentPage + 1)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -242,6 +245,8 @@ const ImageInspire = () => {
           )}
         </div>
       </main>
+      
+      <BackToTop />
     </div>
   )
 }

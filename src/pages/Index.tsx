@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Header } from "@/components/header"
 import { ImageCard } from "@/components/image-card"
+import { BackToTop } from "@/components/back-to-top"
 import { Pagination } from "@/components/pagination"
 import { LoadingSkeleton } from "@/components/loading-skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -138,6 +139,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
+      
+      <BackToTop />
     </div>
   )
 };
