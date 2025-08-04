@@ -63,6 +63,11 @@ export function Header({ onSearch }: HeaderProps) {
                   Gen Image Prompt
                 </a>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="/image-inspire" className="w-full">
+                  Image Inspire
+                </a>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </nav>
@@ -130,6 +135,9 @@ export function Header({ onSearch }: HeaderProps) {
                     </a>
                     <a href="/image-prompt" className="block text-muted-foreground hover:text-foreground transition-colors">
                       Gen Image Prompt
+                    </a>
+                    <a href="/image-inspire" className="block text-muted-foreground hover:text-foreground transition-colors">
+                      Image Inspire
                     </a>
                   </div>
                 )}

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Camera, Upload, Sparkles, Copy, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { Header } from "@/components/header"
+import { useLocation } from "react-router-dom"
 
 const GEMINI_MODELS = [
   { value: "gemini-1.5-flash-latest", label: "gemini-1.5-flash-latest" },
@@ -17,6 +18,7 @@ const GEMINI_MODELS = [
 ]
 
 const ImagePrompt = () => {
+  const location = useLocation()
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [apiKey, setApiKey] = useState(() => localStorage.getItem("gemini-api-key") || "")
@@ -26,6 +28,25 @@ const ImagePrompt = () => {
   const [isDragOver, setIsDragOver] = useState(false)
   const [copiedPrompt, setCopiedPrompt] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Handle image URL from location state (from Image Inspire page)
+  useEffect(() => {
+    const imageUrl = location.state?.imageUrl
+    if (imageUrl) {
+      setImagePreview(imageUrl)
+      // Create a fake file object for the URL image
+      fetch(imageUrl)
+        .then(res => res.blob())
+        .then(blob => {
+          const file = new File([blob], 'inspired-image.jpg', { type: 'image/jpeg' })
+          setSelectedImage(file)
+        })
+        .catch(err => {
+          console.error('Failed to load image from URL:', err)
+          toast.error("Failed to load the inspired image")
+        })
+    }
+  }, [location.state])
 
   const handleSearch = (query: string) => {
     console.log('Search query:', query)
