@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Search, ChevronLeft, ChevronRight, Sparkles, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -28,17 +28,34 @@ const fetchInspireImages = async (query: string, page: number): Promise<ApiRespo
 }
 
 const ImageInspire = () => {
-  const [searchQuery, setSearchQuery] = useState("robot")
+  const defaultSearchTerms = [
+    "Business meeting", "teamwork", "startup", "innovation", "data", "cybersecurity", 
+    "Nature", "landscape", "forest", "ocean", "mountains", "sunset", "beach", 
+    "Happy family", "diverse people", "healthy lifestyle", "friends", "travel", "fitness", "education", 
+    "Abstract background", "geometric patterns", "textures", "gradients", 
+    "Success", "inspiration", "creativity", "connection", "happiness"
+  ]
+  
+  const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [hasSubmitted, setHasSubmitted] = useState(false)
+  const [initialQuery, setInitialQuery] = useState("")
   const navigate = useNavigate()
+
+  useEffect(() => {
+    // Pick a random search term on first load
+    const randomTerm = defaultSearchTerms[Math.floor(Math.random() * defaultSearchTerms.length)]
+    setInitialQuery(randomTerm)
+    setSearchQuery(randomTerm)
+    setHasSubmitted(true)
+  }, [])
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['inspire-images', searchQuery, currentPage],
     queryFn: () => fetchInspireImages(searchQuery, currentPage),
     staleTime: 5 * 60 * 1000,
     retry: 3,
-    enabled: hasSubmitted
+    enabled: hasSubmitted && searchQuery.trim() !== ""
   })
 
   const handleSearch = (e: React.FormEvent) => {
@@ -164,10 +181,7 @@ const ImageInspire = () => {
                       />
                     </div>
                     <CardContent className="p-4">
-                      <p className="text-sm text-muted-foreground mb-3 capitalize">
-                        Source: {image.source}
-                      </p>
-                      <Button 
+                      <Button
                         onClick={() => handleInspireClick(image.image_url)}
                         className="w-full"
                         variant="default"
@@ -191,10 +205,6 @@ const ImageInspire = () => {
                   <ChevronLeft className="h-4 w-4 mr-2" />
                   Previous
                 </Button>
-                
-                <span className="text-muted-foreground font-medium">
-                  Page {currentPage}
-                </span>
                 
                 <Button
                   onClick={handleNextPage}
