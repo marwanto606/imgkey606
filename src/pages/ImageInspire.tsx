@@ -8,7 +8,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { toast } from "sonner"
 import { Header } from "@/components/header"
 import { BackToTop } from "@/components/back-to-top"
-import { useNavigate } from "react-router-dom"
+import { PromptSidebar } from "@/components/prompt-sidebar"
+import { SidebarToggle } from "@/components/sidebar-toggle"
 
 interface ImageData {
   id: number
@@ -41,7 +42,8 @@ const ImageInspire = () => {
   const [submittedQuery, setSubmittedQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [hasSubmitted, setHasSubmitted] = useState(false)
-  const navigate = useNavigate()
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null)
 
   useEffect(() => {
     // Pick a random search term on first load
@@ -73,13 +75,17 @@ const ImageInspire = () => {
   }
 
   const handleInspireClick = (imageUrl: string) => {
-    // Navigate to image-prompt page and pass the image URL
-    navigate('/image-prompt', { 
-      state: { 
-        imageUrl: imageUrl 
-      }
-    })
-    toast.success("Image sent to prompt generator!")
+    setSelectedImageUrl(imageUrl)
+    setIsSidebarOpen(true)
+    toast.success("Image loaded in prompt generator!")
+  }
+
+  const handleSidebarToggle = () => {
+    setIsSidebarOpen(!isSidebarOpen)
+  }
+
+  const handleSidebarClose = () => {
+    setIsSidebarOpen(false)
   }
 
   const handlePrevPage = () => {
@@ -247,6 +253,12 @@ const ImageInspire = () => {
       </main>
       
       <BackToTop />
+      <SidebarToggle isOpen={isSidebarOpen} onToggle={handleSidebarToggle} />
+      <PromptSidebar 
+        isOpen={isSidebarOpen} 
+        onClose={handleSidebarClose} 
+        imageUrl={selectedImageUrl || undefined}
+      />
     </div>
   )
 }
