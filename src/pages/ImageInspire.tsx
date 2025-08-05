@@ -138,7 +138,6 @@ const ImageInspire = () => {
                 </div>
                 <Button type="submit" size="lg" className="md:w-auto w-full">
                   <Search className="h-4 w-4 mr-2" />
-                  Search Images
                 </Button>
               </form>
             </CardContent>
