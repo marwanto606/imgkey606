@@ -204,107 +204,56 @@ export const PromptSidebar = ({ isOpen, onClose, imageUrl }: PromptSidebarProps)
           </div>
           
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {/* Image Upload */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-sm">
-                  <Camera className="h-4 w-4" />
-                  Image
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div
-                  className={`relative border-2 border-dashed rounded-lg p-4 transition-colors ${
-                    isDragOver
-                      ? 'border-primary bg-primary/5'
-                      : 'border-muted-foreground/25 hover:border-primary/50'
-                  }`}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileInputChange}
-                    className="hidden"
-                  />
-                  
-                  <div className="text-center">
-                    {imagePreview ? (
-                      <div className="space-y-2">
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="max-w-full max-h-32 mx-auto rounded shadow-sm"
-                        />
-                        <Button variant="outline" size="sm" className="text-xs">
-                          Change Image
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <Upload className="h-8 w-8 mx-auto text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">Drop image here</p>
-                          <p className="text-xs text-muted-foreground">or click to select</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* API Key */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Gemini API Key</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Input
-                  type="password"
-                  placeholder="Enter your Gemini API key"
-                  value={apiKey}
-                  onChange={(e) => handleApiKeyChange(e.target.value)}
-                  className="text-sm"
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <Camera className="h-4 w-4" />
+                Image
+              </div>
+              <div
+                className={`relative border-2 border-dashed rounded-lg p-4 transition-colors ${
+                  isDragOver
+                    ? 'border-primary bg-primary/5'
+                    : 'border-muted-foreground/25 hover:border-primary/50'
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileInputChange}
+                  className="hidden"
                 />
-                <p className="text-xs text-muted-foreground">
-                  <a
-                    href="https://aistudio.google.com/app/apikey"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    Get your API key here
-                  </a>
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Model Selection */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Gemini Model</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Select value={selectedModel} onValueChange={setSelectedModel}>
-                  <SelectTrigger className="text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {GEMINI_MODELS.map((model) => (
-                      <SelectItem key={model.value} value={model.value} className="text-sm">
-                        {model.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </CardContent>
-            </Card>
+                
+                <div className="text-center">
+                  {imagePreview ? (
+                    <div className="space-y-2">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="max-w-full max-h-32 mx-auto rounded shadow-sm"
+                      />
+                      <Button variant="outline" size="sm" className="text-xs">
+                        Change Image
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Upload className="h-8 w-8 mx-auto text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium">Drop image here</p>
+                        <p className="text-xs text-muted-foreground">or click to select</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
 
             {/* Generate Button */}
             <Button
@@ -327,35 +276,69 @@ export const PromptSidebar = ({ isOpen, onClose, imageUrl }: PromptSidebarProps)
 
             {/* Generated Prompt */}
             {prompt && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm">Generated Prompt</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="generated-prompt" className="text-xs">AI Image Prompt</Label>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => copyToClipboard(prompt)}
-                      className="h-6 px-2"
-                    >
-                      {copiedPrompt ? (
-                        <Check className="h-3 w-3" />
-                      ) : (
-                        <Copy className="h-3 w-3" />
-                      )}
-                    </Button>
-                  </div>
-                  <Textarea
-                    id="generated-prompt"
-                    value={prompt}
-                    readOnly
-                    className="min-h-32 text-xs"
-                  />
-                </CardContent>
-              </Card>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="generated-prompt" className="text-sm font-medium">Generated Prompt</Label>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(prompt)}
+                    className="h-6 px-2"
+                  >
+                    {copiedPrompt ? (
+                      <Check className="h-3 w-3" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
+                  </Button>
+                </div>
+                <Textarea
+                  id="generated-prompt"
+                  value={prompt}
+                  readOnly
+                  className="min-h-32 text-xs"
+                />
+              </div>
             )}
+
+            {/* Model Selection */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Gemini Model</Label>
+              <Select value={selectedModel} onValueChange={setSelectedModel}>
+                <SelectTrigger className="text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {GEMINI_MODELS.map((model) => (
+                    <SelectItem key={model.value} value={model.value} className="text-sm">
+                      {model.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* API Key */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Gemini API Key</Label>
+              <Input
+                type="password"
+                placeholder="Enter your Gemini API key"
+                value={apiKey}
+                onChange={(e) => handleApiKeyChange(e.target.value)}
+                className="text-sm"
+              />
+              <p className="text-xs text-muted-foreground">
+                <a
+                  href="https://aistudio.google.com/app/apikey"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Get your API key here
+                </a>
+              </p>
+            </div>
 
             {/* Info */}
             <Alert>
