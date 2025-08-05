@@ -38,33 +38,33 @@ const ImageInspire = () => {
   ]
   
   const [searchQuery, setSearchQuery] = useState("")
+  const [submittedQuery, setSubmittedQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [hasSubmitted, setHasSubmitted] = useState(false)
-  const [initialQuery, setInitialQuery] = useState("")
   const navigate = useNavigate()
 
   useEffect(() => {
     // Pick a random search term on first load
     const randomTerm = defaultSearchTerms[Math.floor(Math.random() * defaultSearchTerms.length)]
-    setInitialQuery(randomTerm)
+    setSubmittedQuery(randomTerm)
     setSearchQuery(randomTerm)
     setHasSubmitted(true)
   }, [])
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['inspire-images', searchQuery, currentPage],
-    queryFn: () => fetchInspireImages(searchQuery, currentPage),
+    queryKey: ['inspire-images', submittedQuery, currentPage],
+    queryFn: () => fetchInspireImages(submittedQuery, currentPage),
     staleTime: 5 * 60 * 1000,
     retry: 3,
-    enabled: hasSubmitted && searchQuery.trim() !== ""
+    enabled: hasSubmitted && submittedQuery.trim() !== ""
   })
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
+      setSubmittedQuery(searchQuery.trim())
       setCurrentPage(1)
       setHasSubmitted(true)
-      refetch()
     }
   }
 
