@@ -1,8 +1,17 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useSEO } from "@/hooks/use-seo";
 
 const NotFound = () => {
   const location = useLocation();
+
+  // SEO Configuration
+  useSEO({
+    title: "404 - Page Not Found | ImgKey606",
+    description: "Sorry, the page you are looking for could not be found. Return to ImgKey606 to discover amazing stock images and AI-powered tools.",
+    keywords: "404, page not found, error page, ImgKey606",
+    canonical: "https://imgkey.lovable.app/404"
+  });
 
   useEffect(() => {
     console.error(

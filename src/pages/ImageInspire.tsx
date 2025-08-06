@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { useSEO } from "@/hooks/use-seo"
 import { Search, ChevronLeft, ChevronRight, Sparkles, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,6 +31,14 @@ const fetchInspireImages = async (query: string, page: number): Promise<ApiRespo
 }
 
 const ImageInspire = () => {
+  // SEO Configuration
+  useSEO({
+    title: "Image Inspiration Gallery - AI Prompt Generator | ImgKey606",
+    description: "Search for inspiring images and generate AI prompts from them. Perfect for finding creative inspiration and converting images to detailed AI art prompts for text-to-image generation.",
+    keywords: "image inspiration, AI prompt generator, creative inspiration, image search, AI art inspiration, prompt engineering, text to image, visual inspiration, creative ideas, AI image generation",
+    canonical: "https://imgkey.lovable.app/image-inspire"
+  })
+
   const defaultSearchTerms = [
     "Business meeting", "teamwork", "startup", "innovation", "data", "cybersecurity", 
     "Nature", "landscape", "forest", "ocean", "mountains", "sunset", "beach", 

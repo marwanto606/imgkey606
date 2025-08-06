@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { Camera, Upload, Sparkles, Copy, Check } from "lucide-react"
+import { useSEO } from "@/hooks/use-seo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,6 +21,14 @@ const GEMINI_MODELS = [
 const ImagePrompt = () => {
   const location = useLocation()
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
+
+  // SEO Configuration
+  useSEO({
+    title: "Image to Prompt AI - Generate AI Art Prompts | ImgKey606",
+    description: "Upload an image to generate detailed text-to-image prompts for AI art creation. Perfect for Midjourney, DALL-E, Stable Diffusion, and other AI image generators. Powered by Google Gemini AI.",
+    keywords: "image to prompt, AI art prompts, text to image, AI image generation, Midjourney prompts, DALL-E prompts, Stable Diffusion, AI art creation, prompt engineering, Google Gemini AI",
+    canonical: "https://imgkey.lovable.app/image-prompt"
+  })
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [apiKey, setApiKey] = useState(() => localStorage.getItem("gemini-api-key") || "")
   const [selectedModel, setSelectedModel] = useState("gemini-2.0-flash")

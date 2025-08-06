@@ -1,5 +1,6 @@
 import { useState, useRef } from "react"
 import { Camera, Upload, Sparkles, ChevronDown, Copy, Check } from "lucide-react"
+import { useSEO } from "@/hooks/use-seo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -23,6 +24,14 @@ interface AnalysisResult {
 
 const ImageTitleKeyword = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
+
+  // SEO Configuration
+  useSEO({
+    title: "Image Analysis AI - Generate SEO Titles & Keywords | ImgKey606",
+    description: "Upload an image to generate SEO-optimized titles and 50 relevant keywords using AI. Perfect for stock photographers, content creators, and marketers. Powered by Google Gemini AI.",
+    keywords: "image analysis, AI image analysis, SEO keywords generator, image title generator, stock photo keywords, AI content creation, image SEO, Google Gemini AI",
+    canonical: "https://imgkey.lovable.app/image-title-keyword"
+  })
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [apiKey, setApiKey] = useState(() => localStorage.getItem("gemini-api-key") || "")
   const [selectedModel, setSelectedModel] = useState("gemini-2.0-flash")

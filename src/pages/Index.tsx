@@ -7,6 +7,7 @@ import { Pagination } from "@/components/pagination"
 import { LoadingSkeleton } from "@/components/loading-skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Images } from "lucide-react"
+import { useSEO } from "@/hooks/use-seo"
 
 interface ImageData {
   content_id: number
@@ -37,6 +38,14 @@ const fetchImages = async (page: number): Promise<ApiResponse> => {
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState(1)
+
+  // SEO Configuration
+  useSEO({
+    title: "ImgKey606 - Discover Amazing Stock Images | High-Quality Photos",
+    description: "Browse through thousands of high-quality stock photos from talented creators. Find the perfect image for your project with ImgKey606. Free stock images, royalty-free photography, and digital art.",
+    keywords: "stock images, stock photos, royalty free, photography, graphics, digital art, free images, high quality photos, creative content, visual assets",
+    canonical: "https://imgkey.lovable.app/"
+  })
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['images', currentPage],
