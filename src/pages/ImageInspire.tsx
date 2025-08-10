@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useSEO } from "@/hooks/use-seo"
-import { Search, ChevronLeft, ChevronRight, Sparkles, Image as ImageIcon } from "lucide-react"
+import { Search, ChevronLeft, ChevronRight, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -11,6 +11,7 @@ import { Header } from "@/components/header"
 import { BackToTop } from "@/components/back-to-top"
 import { PromptSidebar } from "@/components/prompt-sidebar"
 import { SidebarToggle } from "@/components/sidebar-toggle"
+import { InspireImageCard } from "@/components/inspire-image-card"
 
 interface ImageData {
   id: number
@@ -111,7 +112,10 @@ const ImageInspire = () => {
     }
   }
 
-  const images = data?.items || []
+  // Filter out images with empty or invalid URLs
+  const images = (data?.items || []).filter(image => 
+    image.image_url && image.image_url.trim() !== ""
+  )
 
   return (
     <div className="min-h-screen bg-background">
@@ -187,27 +191,11 @@ const ImageInspire = () => {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                 {images.map((image) => (
-                  <Card key={image.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
-                    <div className="aspect-square overflow-hidden">
-                      <img
-                        src={image.image_url}
-                        alt={`Inspiration from ${image.source}`}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                        onClick={() => handleInspireClick(image.image_url)}
-                      />
-                    </div>
-                    <CardContent className="p-4">
-                      <Button
-                        onClick={() => handleInspireClick(image.image_url)}
-                        className="w-full"
-                        variant="default"
-                      >
-                        <Sparkles className="h-4 w-4 mr-2" />
-                        Inspire
-                      </Button>
-                    </CardContent>
-                  </Card>
+                  <InspireImageCard
+                    key={image.id}
+                    image={image}
+                    onInspireClick={handleInspireClick}
+                  />
                 ))}
               </div>
 
