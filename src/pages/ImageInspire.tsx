@@ -115,6 +115,13 @@ const ImageInspire = () => {
     }
   }
 
+  const handleQuickSearch = (term: string) => {
+    setSearchQuery(term)
+    setSubmittedQuery(term)
+    setCurrentPage(1)
+    setHasSubmitted(true)
+  }
+
   const handleHeaderSearch = (query: string) => {
     console.log('Header search query:', query)
   }
@@ -190,6 +197,23 @@ const ImageInspire = () => {
               </form>
             </CardContent>
           </Card>
+
+          {/* Quick Search Menu */}
+          <div className="mb-8 overflow-x-auto">
+            <div className="flex gap-2 pb-2 min-w-max">
+              {defaultSearchTerms.map((term, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickSearch(term)}
+                  className="whitespace-nowrap hover:bg-primary hover:text-primary-foreground transition-colors"
+                >
+                  {term}
+                </Button>
+              ))}
+            </div>
+          </div>
 
           {/* Error State */}
           {error && (
