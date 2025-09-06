@@ -241,8 +241,7 @@ const ImageInspire = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => handleQuickSearch(term)}
-                    className="whitespace-nowrap hover:bg-primary hover:text-primary-foreground transition-colors flex-shrink-0 pointer-events-auto"
-                    onMouseDown={(e) => e.stopPropagation()}
+                    className="whitespace-nowrap hover:bg-primary hover:text-primary-foreground transition-colors flex-shrink-0"
                   >
                     {term}
                   </Button>
