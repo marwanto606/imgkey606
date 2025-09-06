@@ -89,6 +89,9 @@ const ImageInspire = () => {
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [startX, setStartX] = useState(0)
+  const [scrollLeft, setScrollLeft] = useState(0)
 
   useEffect(() => {
     // Pick a random search term on first load
@@ -138,6 +141,30 @@ const ImageInspire = () => {
 
   const handleSidebarClose = () => {
     setIsSidebarOpen(false)
+  }
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true)
+    const slider = e.currentTarget as HTMLElement
+    setStartX(e.pageX - slider.offsetLeft)
+    setScrollLeft(slider.scrollLeft)
+  }
+
+  const handleMouseLeave = () => {
+    setIsDragging(false)
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return
+    e.preventDefault()
+    const slider = e.currentTarget as HTMLElement
+    const x = e.pageX - slider.offsetLeft
+    const walk = (x - startX) * 2
+    slider.scrollLeft = scrollLeft - walk
   }
 
   const handlePrevPage = () => {
@@ -200,8 +227,13 @@ const ImageInspire = () => {
 
           {/* Quick Search Menu */}
           <div className="mb-8">
-            <h3 className="text-sm font-medium text-muted-foreground mb-3">Quick Search Categories</h3>
-            <div className="overflow-x-auto">
+            <div 
+              className="overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing select-none"
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseLeave}
+              onMouseMove={handleMouseMove}
+            >
               <div className="flex gap-2 pb-2 min-w-max">
                 {defaultSearchTerms.map((term, index) => (
                   <Button
@@ -209,7 +241,8 @@ const ImageInspire = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => handleQuickSearch(term)}
-                    className="whitespace-nowrap hover:bg-primary hover:text-primary-foreground transition-colors flex-shrink-0"
+                    className="whitespace-nowrap hover:bg-primary hover:text-primary-foreground transition-colors flex-shrink-0 pointer-events-auto"
+                    onMouseDown={(e) => e.stopPropagation()}
                   >
                     {term}
                   </Button>
