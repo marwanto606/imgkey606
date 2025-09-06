@@ -199,19 +199,22 @@ const ImageInspire = () => {
           </Card>
 
           {/* Quick Search Menu */}
-          <div className="mb-8 overflow-x-auto">
-            <div className="flex gap-2 pb-2 min-w-max">
-              {defaultSearchTerms.map((term, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleQuickSearch(term)}
-                  className="whitespace-nowrap hover:bg-primary hover:text-primary-foreground transition-colors"
-                >
-                  {term}
-                </Button>
-              ))}
+          <div className="mb-8">
+            <h3 className="text-sm font-medium text-muted-foreground mb-3">Quick Search Categories</h3>
+            <div className="overflow-x-auto">
+              <div className="flex gap-2 pb-2 min-w-max">
+                {defaultSearchTerms.map((term, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleQuickSearch(term)}
+                    className="whitespace-nowrap hover:bg-primary hover:text-primary-foreground transition-colors flex-shrink-0"
+                  >
+                    {term}
+                  </Button>
+                ))}
+              </div>
             </div>
           </div>
 
