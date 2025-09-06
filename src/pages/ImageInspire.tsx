@@ -41,12 +41,47 @@ const ImageInspire = () => {
   })
 
   const defaultSearchTerms = [
-    "Business meeting", "teamwork", "startup", "innovation", "data", "cybersecurity", 
-    "Nature", "landscape", "forest", "ocean", "mountains", "sunset", "beach", 
-    "Happy family", "diverse people", "healthy lifestyle", "friends", "travel", "fitness", "education", 
-    "Abstract background", "geometric patterns", "textures", "gradients", 
-    "Success", "inspiration", "creativity", "connection", "happiness"
-  ]
+  // Business & Technology
+  "Business meeting", "Teamwork", "Startup", "Innovation", "Data", "Cybersecurity", 
+  "Artificial intelligence", "Machine learning", "Cloud computing", "Digital marketing",
+  "Remote work", "E-commerce", "Blockchain", "Fintech", "Smart city", 
+  "Virtual reality", "Augmented reality", "Metaverse", "Big data", "Sustainable business",
+
+  // Nature & Environment
+  "Nature", "Landscape", "Forest", "Ocean", "Mountains", "Sunset", "Beach",
+  "Wildlife", "Rainforest", "Desert", "Waterfall", "Flowers", "Underwater", 
+  "Sustainable energy", "Solar panels", "Wind turbines", "Climate change", "Recycling",
+
+  // People & Lifestyle
+  "Happy family", "Diverse people", "Healthy lifestyle", "Friends", "Travel", 
+  "Fitness", "Education", "Wellness", "Meditation", "Remote learning", "Office workers", 
+  "Generation Z", "Millennials", "Elderly care", "Healthcare workers", "Volunteering",
+
+  // Abstract & Creative
+  "Abstract background", "Geometric patterns", "Textures", "Gradients",
+  "Minimalism", "Futuristic design", "Neon lights", "Cyberpunk", "Digital art",
+  "Creative workspace", "Collaboration", "Brainstorming", "Innovation ideas", 
+
+  // Food & Drinks
+  "Healthy food", "Vegan meals", "Coffee", "Tea time", "Street food", "Fine dining", 
+  "Fresh fruits", "Organic farming", "Cooking at home", "Food delivery",
+
+  // Travel & Architecture
+  "City skyline", "Urban lifestyle", "Architecture", "Famous landmarks", 
+  "Cultural heritage", "Travel adventure", "Camping", "Road trip", "Aerial view", 
+
+  // Emotions & Concepts
+  "Success", "Inspiration", "Creativity", "Connection", "Happiness", 
+  "Love", "Hope", "Motivation", "Innovation", "Future technology",
+
+  // Typography & Text
+  "Typography design", "Hand lettering", "Modern calligraphy", "Bold fonts", 
+  "Minimalist typography", "Vintage typography", "Sans serif fonts", "Serif fonts", 
+  "Script fonts", "Monogram design", "Word art", "Motivational quotes", 
+  "Inspirational typography", "Poster typography", "3D text effect", 
+  "Retro text design", "Graffiti lettering", "Abstract typography", 
+  "Logo typography", "Futuristic fonts"
+  ];
   
   const [searchQuery, setSearchQuery] = useState("")
   const [submittedQuery, setSubmittedQuery] = useState("")
