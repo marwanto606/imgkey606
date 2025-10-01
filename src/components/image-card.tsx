@@ -2,6 +2,7 @@ import { ExternalLink, User, Tag } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Link } from "react-router-dom"
 
 interface ImageData {
   content_id: number
@@ -19,29 +20,31 @@ interface ImageCardProps {
 }
 
 export function ImageCard({ image }: ImageCardProps) {
-  const handleViewImage = () => {
-    window.open(`https://stock.adobe.com/uk/stock-photo/id/${image.content_id}`, '_blank')
-  }
+  const stockUrl = `/stock/${image.content_id}`;
 
   return (
     <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:shadow-primary/10">
-      <div className="relative overflow-hidden">
-        <img
-          src={image.content_thumb_large_url}
-          alt={image.title}
-          className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
-        <Button
-          onClick={handleViewImage}
-          className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300"
-          size="sm"
-          variant="secondary"
-        >
-          <ExternalLink className="h-4 w-4" />
-        </Button>
-      </div>
+      <Link to={stockUrl}>
+        <div className="relative overflow-hidden">
+          <img
+            src={image.content_thumb_large_url}
+            alt={image.title}
+            className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+          <Button
+            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300"
+            size="sm"
+            variant="secondary"
+            asChild
+          >
+            <span>
+              <ExternalLink className="h-4 w-4" />
+            </span>
+          </Button>
+        </div>
+      </Link>
       
       <CardContent className="p-4">
         <h3 className="font-semibold text-sm mb-2 line-clamp-2 leading-tight">
@@ -60,11 +63,13 @@ export function ImageCard({ image }: ImageCardProps) {
         </div>
         
         <Button 
-          onClick={handleViewImage}
           className="w-full"
           size="sm"
+          asChild
         >
-          View Image
+          <Link to={stockUrl}>
+            View Image
+          </Link>
         </Button>
       </CardContent>
     </Card>

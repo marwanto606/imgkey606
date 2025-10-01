@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import ImageTitleKeyword from "./pages/ImageTitleKeyword";
 import ImagePrompt from "./pages/ImagePrompt";
 import ImageInspire from "./pages/ImageInspire";
+import StockImageRedirect from "./pages/StockImageRedirect";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const AppWithAnalytics = () => {
       <Route path="/image-title-keyword" element={<ImageTitleKeyword />} />
       <Route path="/image-prompt" element={<ImagePrompt />} />
       <Route path="/image-inspire" element={<ImageInspire />} />
+      <Route path="/stock/:id" element={<StockImageRedirect />} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>
