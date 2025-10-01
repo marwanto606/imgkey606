@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { Camera, Upload, Sparkles, Copy, Check, X, ChevronLeft } from "lucide-react"
+import { Camera, Upload, Sparkles, Copy, Check, X, ChevronLeft, Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -30,6 +30,7 @@ export const PromptSidebar = ({ isOpen, onClose, imageUrl }: PromptSidebarProps)
   const [prompt, setPrompt] = useState<string | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
   const [copiedPrompt, setCopiedPrompt] = useState(false)
+  const [showApiKey, setShowApiKey] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Update image when imageUrl prop changes
@@ -321,13 +322,28 @@ export const PromptSidebar = ({ isOpen, onClose, imageUrl }: PromptSidebarProps)
             {/* API Key */}
             <div className="space-y-3">
               <Label className="text-sm font-medium">Gemini API Key</Label>
-              <Input
-                type="password"
-                placeholder="Enter your Gemini API key"
-                value={apiKey}
-                onChange={(e) => handleApiKeyChange(e.target.value)}
-                className="text-sm"
-              />
+              <div className="relative">
+                <Input
+                  type={showApiKey ? "text" : "password"}
+                  placeholder="Enter your Gemini API key"
+                  value={apiKey}
+                  onChange={(e) => handleApiKeyChange(e.target.value)}
+                  className="text-sm pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-10 w-10"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                >
+                  {showApiKey ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
               <p className="text-xs text-muted-foreground">
                 <a
                   href="https://aistudio.google.com/app/apikey"

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { Camera, Upload, Sparkles, Copy, Check } from "lucide-react"
+import { Camera, Upload, Sparkles, Copy, Check, Eye, EyeOff } from "lucide-react"
 import { useSEO } from "@/hooks/use-seo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -36,6 +36,7 @@ const ImagePrompt = () => {
   const [prompt, setPrompt] = useState<string | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
   const [copiedPrompt, setCopiedPrompt] = useState(false)
+  const [showApiKey, setShowApiKey] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Handle image URL from location state (from Image Inspire page)
@@ -297,13 +298,27 @@ const ImagePrompt = () => {
                   <CardTitle>Gemini API Key</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div>
+                  <div className="relative">
                     <Input
-                      type="password"
+                      type={showApiKey ? "text" : "password"}
                       placeholder="Enter your Gemini API key"
                       value={apiKey}
                       onChange={(e) => handleApiKeyChange(e.target.value)}
+                      className="pr-10"
                     />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-0 h-10 w-10"
+                      onClick={() => setShowApiKey(!showApiKey)}
+                    >
+                      {showApiKey ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     <a
