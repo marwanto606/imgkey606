@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { useSEO } from "@/hooks/use-seo";
-import { Loader2 } from "lucide-react";
+import { Loader2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 
 interface ImageApiResponse {
@@ -27,6 +28,7 @@ const fetchImageData = async (id: string): Promise<ImageApiResponse> => {
 export default function StockImageRedirect() {
   const { id } = useParams<{ id: string }>();
   const [redirecting, setRedirecting] = useState(false);
+  const [countdown, setCountdown] = useState(10);
   
   if (!id) {
     return <Navigate to="/" replace />;
@@ -110,7 +112,7 @@ export default function StockImageRedirect() {
     // Add meta refresh fallback
     const metaRefresh = document.createElement("meta");
     metaRefresh.httpEquiv = "refresh";
-    metaRefresh.content = `3;url=${adobeUrl}`;
+    metaRefresh.content = `11;url=${adobeUrl}`;
     document.head.appendChild(metaRefresh);
 
     // Perform redirect after delay (only after data is loaded or error)
@@ -118,7 +120,7 @@ export default function StockImageRedirect() {
       const timer = setTimeout(() => {
         setRedirecting(true);
         window.location.href = adobeUrl;
-      }, 2500);
+      }, 10000);
 
       return () => {
         clearTimeout(timer);
@@ -127,6 +129,17 @@ export default function StockImageRedirect() {
       };
     }
   }, [id, adobeUrl, imageData, isLoading]);
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (!isLoading && countdown > 0) {
+      const interval = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isLoading, countdown]);
 
   return (
     <>
@@ -165,6 +178,16 @@ export default function StockImageRedirect() {
                 />
               </div>
 
+              {/* CTA Button */}
+              <Button 
+                onClick={() => window.location.href = adobeUrl}
+                size="lg"
+                className="w-full sm:w-auto"
+              >
+                <ExternalLink className="mr-2 h-5 w-5" />
+                View on Adobe Stock
+              </Button>
+
               {/* Title */}
               <h1 className="text-3xl font-bold leading-tight">
                 {imageData.title}
@@ -196,15 +219,20 @@ export default function StockImageRedirect() {
                 </div>
               )}
 
-              {/* Redirect Status */}
+              {/* Redirect Status with Countdown */}
               <div className="space-y-3 pt-4">
                 {redirecting ? (
                   <p className="text-primary font-medium">Redirecting now...</p>
                 ) : (
                   <>
-                    <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+                    <div className="flex items-center justify-center gap-3">
+                      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                      <p className="text-lg font-semibold text-foreground">
+                        Redirecting in {countdown}s
+                      </p>
+                    </div>
                     <p className="text-sm text-muted-foreground">
-                      Redirecting to Adobe Stock...
+                      You'll be taken to Adobe Stock shortly
                     </p>
                   </>
                 )}
