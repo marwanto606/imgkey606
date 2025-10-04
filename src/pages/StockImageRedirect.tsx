@@ -162,6 +162,7 @@ export default function StockImageRedirect() {
               <a 
                 href={adobeUrl}
                 className="text-sm text-primary hover:underline block"
+                rel="nofollow noopener"
               >
                 Click here if you are not redirected automatically
               </a>
@@ -185,7 +186,7 @@ export default function StockImageRedirect() {
                 className="w-full sm:w-auto"
               >
                 <ExternalLink className="mr-2 h-5 w-5" />
-                View on Adobe Stock
+                Purchase on Adobe Stock
               </Button>
 
               {/* Title */}
@@ -239,6 +240,7 @@ export default function StockImageRedirect() {
                 <a 
                   href={adobeUrl}
                   className="text-sm text-primary hover:underline block"
+                  rel="nofollow noopener"
                 >
                   Click here if you are not redirected automatically
                 </a>
