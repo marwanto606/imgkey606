@@ -1,0 +1,73 @@
+name: Generate Sitemap
+
+on:
+  schedule:
+    # Run every Sunday at 2 AM UTC (setiap Minggu jam 2 pagi)
+    - cron: '0 2 * * 0'
+  
+  workflow_dispatch:
+    # Allow manual trigger from GitHub Actions tab
+  
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/generate-sitemap.js'
+      - 'scripts/utils.js'
+      - '.github/workflows/generate-sitemap.yml'
+
+jobs:
+  generate-sitemap:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Generate Sitemap
+        run: node scripts/generate-sitemap.js
+      
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code public/sitemap*.xml || echo "changed=true" >> $GITHUB_OUTPUT
+      
+      - name: Commit and Push
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/sitemap*.xml
+          git commit -m "chore: update sitemap [skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Summary
+        run: |
+          echo "### ✅ Sitemap Generation Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Files Updated:**" >> $GITHUB_STEP_SUMMARY
+          echo "- \`public/sitemap.xml\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`public/sitemap-static.xml\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`public/sitemap-images.xml\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Sitemap URLs:**" >> $GITHUB_STEP_SUMMARY
+          echo "- https://imgkey.lovable.app/sitemap.xml" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.git-check.outputs.changed }}" == "true" ]; then
+            echo "✓ Changes committed and pushed to repository" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No changes detected - sitemap is already up to date" >> $GITHUB_STEP_SUMMARY
+          fi
