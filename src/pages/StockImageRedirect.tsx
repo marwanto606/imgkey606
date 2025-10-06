@@ -42,20 +42,18 @@ export default function StockImageRedirect() {
     retry: 1,
   });
 
-  // SEO with dynamic data or fallback
-  useSEO({
-    title: imageData 
-      ? `${imageData.title} - ${imageData.author} | ImgKey606`
-      : `Stock Image ${id} - ImgKey606`,
-    description: imageData?.meta_description || `View high-quality stock image ${id} on Adobe Stock. Browse thousands of professional stock photos, images, and illustrations.`,
-    keywords: imageData?.keywords.join(", ") || "stock image, adobe stock, professional photography, stock photos, image library",
-    ogTitle: imageData 
-      ? `${imageData.title} by ${imageData.author}`
-      : `Stock Image ${id} - ImgKey606`,
-    ogDescription: imageData?.meta_description || "Professional stock image available on Adobe Stock",
-    ogImage: imageData?.content_thumb_large_url || "https://imgkey.lovable.app/og-image.jpg",
-    canonical: `https://imgkey.lovable.app/stock/${id}`,
-  });
+  // SEO - only set when data is loaded to prevent crawlers from indexing fallback
+  if (imageData) {
+    useSEO({
+      title: `${imageData.title} - ${imageData.author} | ImgKey606`,
+      description: imageData.meta_description,
+      keywords: imageData.keywords.join(", "),
+      ogTitle: `${imageData.title} by ${imageData.author}`,
+      ogDescription: imageData.meta_description,
+      ogImage: imageData.content_thumb_large_url,
+      canonical: `https://imgkey.lovable.app/stock/${id}`,
+    });
+  }
 
   useEffect(() => {
     // Add author meta tags
