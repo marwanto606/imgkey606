@@ -42,18 +42,20 @@ export default function StockImageRedirect() {
     retry: 1,
   });
 
-  // SEO - only set when data is loaded to prevent crawlers from indexing fallback
-  if (imageData) {
-    useSEO({
-      title: `${imageData.title} - ${imageData.author} | ImgKey606`,
-      description: imageData.meta_description,
-      keywords: imageData.keywords.join(", "),
-      ogTitle: `${imageData.title} by ${imageData.author}`,
-      ogDescription: imageData.meta_description,
-      ogImage: imageData.content_thumb_large_url,
-      canonical: `https://imgkey.lovable.app/stock/${id}`,
-    });
-  }
+  // SEO - only set real data when loaded to prevent crawlers from indexing fallback
+  useSEO(imageData ? {
+    title: `${imageData.title} - ${imageData.author} | ImgKey606`,
+    description: imageData.meta_description,
+    keywords: imageData.keywords.join(", "),
+    ogTitle: `${imageData.title} by ${imageData.author}`,
+    ogDescription: imageData.meta_description,
+    ogImage: imageData.content_thumb_large_url,
+    canonical: `https://imgkey.lovable.app/stock/${id}`,
+  } : {
+    title: "",
+    description: "",
+    keywords: "",
+  });
 
   useEffect(() => {
     // Add author meta tags
