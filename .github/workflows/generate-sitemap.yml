@@ -1,5 +1,8 @@
 name: Generate Sitemap
 
+permissions:
+  contents: write
+
 on:
   schedule:
     # Run every Sunday at 2 AM UTC (setiap Minggu jam 2 pagi)
