@@ -153,6 +153,14 @@ export default function StockImageRedirect() {
             </div>
           ) : imageData ? (
             <div className="space-y-6 text-center">
+              {/* Site Name Link */}
+              <a 
+                href="/"
+                className="inline-block text-2xl font-bold text-foreground hover:text-primary transition-colors"
+              >
+                ImgKey606
+              </a>
+
               {/* Image Preview */}
               <div className="relative w-full aspect-video overflow-hidden rounded-lg border bg-muted">
                 <img 
