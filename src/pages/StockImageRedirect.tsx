@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
-import { useSEO } from "@/hooks/use-seo";
+import { Helmet } from "react-helmet-async";
 import { Loader2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,46 +42,8 @@ export default function StockImageRedirect() {
     retry: 1,
   });
 
-  // SEO - only set real data when loaded to prevent crawlers from indexing fallback
-  useSEO(imageData ? {
-    title: `${imageData.title} - ${imageData.author} | ImgKey606`,
-    description: imageData.meta_description,
-    keywords: imageData.keywords.join(", "),
-    ogTitle: `${imageData.title} by ${imageData.author}`,
-    ogDescription: imageData.meta_description,
-    ogImage: imageData.content_thumb_large_url,
-    canonical: `https://imgkey.lovable.app/stock/${id}`,
-  } : {
-    title: "",
-    description: "",
-    keywords: "",
-  });
 
   useEffect(() => {
-    // Add author meta tags
-    if (imageData) {
-      const authorMeta = document.querySelector('meta[name="author"]') || document.createElement('meta');
-      authorMeta.setAttribute('name', 'author');
-      authorMeta.setAttribute('content', imageData.author);
-      if (!document.querySelector('meta[name="author"]')) {
-        document.head.appendChild(authorMeta);
-      }
-
-      const articleAuthorMeta = document.querySelector('meta[property="article:author"]') || document.createElement('meta');
-      articleAuthorMeta.setAttribute('property', 'article:author');
-      articleAuthorMeta.setAttribute('content', imageData.author);
-      if (!document.querySelector('meta[property="article:author"]')) {
-        document.head.appendChild(articleAuthorMeta);
-      }
-
-      const ogTypeMeta = document.querySelector('meta[property="og:type"]') || document.createElement('meta');
-      ogTypeMeta.setAttribute('property', 'og:type');
-      ogTypeMeta.setAttribute('content', 'article');
-      if (!document.querySelector('meta[property="og:type"]')) {
-        document.head.appendChild(ogTypeMeta);
-      }
-    }
-
     // Add structured data
     const script = document.createElement("script");
     script.type = "application/ld+json";
@@ -143,6 +105,28 @@ export default function StockImageRedirect() {
 
   return (
     <>
+      {imageData && (
+        <Helmet>
+          <title>{`${imageData.title} - ${imageData.author} | ImgKey606`}</title>
+          <meta name="description" content={imageData.meta_description} />
+          <meta name="keywords" content={imageData.keywords.join(", ")} />
+          <meta name="author" content={imageData.author} />
+          
+          <meta property="og:title" content={`${imageData.title} by ${imageData.author}`} />
+          <meta property="og:description" content={imageData.meta_description} />
+          <meta property="og:image" content={imageData.content_thumb_large_url} />
+          <meta property="og:type" content="article" />
+          <meta property="article:author" content={imageData.author} />
+          
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={`${imageData.title} by ${imageData.author}`} />
+          <meta name="twitter:description" content={imageData.meta_description} />
+          <meta name="twitter:image" content={imageData.content_thumb_large_url} />
+          
+          <link rel="canonical" href={`https://imgkey.lovable.app/stock/${id}`} />
+        </Helmet>
+      )}
+
       <noscript>
         <meta httpEquiv="refresh" content={`0;url=${adobeUrl}`} />
         <p>Redirecting to <a href={adobeUrl}>Adobe Stock</a></p>
@@ -151,14 +135,14 @@ export default function StockImageRedirect() {
       <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
         <div className="max-w-2xl w-full space-y-6">
           {isLoading ? (
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-4" data-nosnippet>
               <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
-              <p className="text-lg text-muted-foreground">Loading image details...</p>
+              <p className="text-lg text-muted-foreground" aria-live="polite">Loading image details...</p>
             </div>
           ) : isError ? (
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-4" data-nosnippet>
               <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-              <p className="text-muted-foreground">Redirecting to Adobe Stock...</p>
+              <p className="text-muted-foreground" aria-live="polite">Redirecting to Adobe Stock...</p>
               <a 
                 href={adobeUrl}
                 className="text-sm text-primary hover:underline block"
@@ -221,14 +205,14 @@ export default function StockImageRedirect() {
               )}
 
               {/* Redirect Status with Countdown */}
-              <div className="space-y-3 pt-4">
+              <div className="space-y-3 pt-4" data-nosnippet>
                 {redirecting ? (
-                  <p className="text-primary font-medium">Redirecting now...</p>
+                  <p className="text-primary font-medium" aria-live="polite">Redirecting now...</p>
                 ) : (
                   <>
                     <div className="flex items-center justify-center gap-3">
                       <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                      <p className="text-lg font-semibold text-foreground">
+                      <p className="text-lg font-semibold text-foreground" aria-live="polite">
                         Redirecting in {countdown}s
                       </p>
                     </div>
