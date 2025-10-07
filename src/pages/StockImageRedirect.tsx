@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Loader2, ExternalLink } from "lucide-react";
+import { Loader2, ExternalLink, Camera } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
@@ -156,9 +156,12 @@ export default function StockImageRedirect() {
               {/* Site Name Link */}
               <a 
                 href="/"
-                className="inline-block text-2xl font-bold text-foreground hover:text-primary transition-colors"
+                className="inline-flex items-center space-x-2 hover:opacity-80 transition-opacity"
               >
-                ImgKey606
+                <Camera className="h-8 w-8 text-primary" />
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent">
+                  ImgKey606
+                </h1>
               </a>
 
               {/* Image Preview */}
