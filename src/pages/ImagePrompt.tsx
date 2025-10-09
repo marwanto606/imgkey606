@@ -13,9 +13,19 @@ import { Header } from "@/components/header"
 import { useLocation } from "react-router-dom"
 
 const GEMINI_MODELS = [
-  { value: "gemini-1.5-flash-latest", label: "gemini-1.5-flash-latest" },
-  { value: "gemini-2.0-flash", label: "gemini-2.0-flash" },
-  { value: "gemini-2.5-flash", label: "gemini-2.5-flash" }
+  // Gemini 2.5 - Latest & Recommended
+  { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash ⚡ (Recommended)", description: "Balance optimal - cepat & akurat" },
+  { value: "gemini-2.5-pro", label: "Gemini 2.5 Pro 🎯", description: "Paling powerful untuk analisis kompleks" },
+  { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash Lite 🚀", description: "Tercepat & terhemat" },
+  
+  // Gemini 2.0
+  { value: "gemini-2.0-flash-exp", label: "Gemini 2.0 Flash (Experimental)", description: "Fitur cutting-edge" },
+  
+  // Gemini 1.5 - Stable & Production Ready
+  { value: "gemini-1.5-flash", label: "Gemini 1.5 Flash", description: "Stabil & cepat" },
+  { value: "gemini-1.5-flash-8b", label: "Gemini 1.5 Flash-8B", description: "Ultra cepat" },
+  { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro", description: "Analisis mendalam" },
+  { value: "gemini-1.5-pro-002", label: "Gemini 1.5 Pro-002", description: "Versi stabil terbaru" },
 ]
 
 const ImagePrompt = () => {
@@ -31,7 +41,7 @@ const ImagePrompt = () => {
   })
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [apiKey, setApiKey] = useState(() => localStorage.getItem("gemini-api-key") || "")
-  const [selectedModel, setSelectedModel] = useState("gemini-2.0-flash")
+  const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash")
   const [isLoading, setIsLoading] = useState(false)
   const [prompt, setPrompt] = useState<string | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
