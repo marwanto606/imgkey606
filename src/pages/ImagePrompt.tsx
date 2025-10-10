@@ -20,12 +20,6 @@ const GEMINI_MODELS = [
   
   // Gemini 2.0
   { value: "gemini-2.0-flash-exp", label: "Gemini 2.0 Flash (Experimental)", description: "Fitur cutting-edge" },
-  
-  // Gemini 1.5 - Stable & Production Ready
-  { value: "gemini-1.5-flash", label: "Gemini 1.5 Flash", description: "Stabil & cepat" },
-  { value: "gemini-1.5-flash-8b", label: "Gemini 1.5 Flash-8B", description: "Ultra cepat" },
-  { value: "gemini-1.5-pro", label: "Gemini 1.5 Pro", description: "Analisis mendalam" },
-  { value: "gemini-1.5-pro-002", label: "Gemini 1.5 Pro-002", description: "Versi stabil terbaru" },
 ]
 
 const ImagePrompt = () => {
