@@ -74,9 +74,9 @@ const Index = () => {
         {/* Hero Section */}
         <section className="text-center py-12 mb-12">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent">
-              Discover Amazing Stock Images
-            </h2>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent leading-tight pb-2">
+            Discover Amazing Stock Images
+          </h2>
             <p className="text-xl text-muted-foreground mb-8">
               Browse through thousands of high-quality stock photos from talented creators
             </p>
