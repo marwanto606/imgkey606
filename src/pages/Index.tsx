@@ -37,7 +37,10 @@ const fetchImages = async (page: number): Promise<ApiResponse> => {
 }
 
 const Index = () => {
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(() => {
+    const savedPage = sessionStorage.getItem('imgkey-current-page')
+    return savedPage ? parseInt(savedPage, 10) : 1
+  })
 
   // SEO Configuration
   useSEO({
@@ -46,6 +49,19 @@ const Index = () => {
     keywords: "stock images, stock photos, royalty free, photography, graphics, digital art, free images, high quality photos, creative content, visual assets",
     canonical: "https://imgkey.lovable.app/"
   })
+
+  // Handle browser back/forward navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      const savedPage = sessionStorage.getItem('imgkey-current-page')
+      if (savedPage) {
+        setCurrentPage(parseInt(savedPage, 10))
+      }
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['images', currentPage],
@@ -56,6 +72,8 @@ const Index = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
+    sessionStorage.setItem('imgkey-current-page', page.toString())
+    window.history.pushState({ page }, '', window.location.pathname)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
