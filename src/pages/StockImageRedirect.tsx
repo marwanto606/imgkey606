@@ -42,66 +42,62 @@ export default function StockImageRedirect() {
     retry: 1,
   });
 
-
+  // Redirect timer (trigger only after loading finished)
   useEffect(() => {
-    // Add structured data
-    const script = document.createElement("script");
-    script.type = "application/ld+json";
-    script.text = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "ImageObject",
-      "name": imageData?.title || `Stock Image ${id}`,
-      "description": imageData?.meta_description || `Professional stock image ${id}`,
-      "contentUrl": adobeUrl,
-      "thumbnailUrl": imageData?.content_thumb_large_url,
-      "url": `https://imgkey.lovable.app/stock/${id}`,
-      "identifier": id,
-      "keywords": imageData?.keywords.join(", "),
-      "author": imageData ? {
-        "@type": "Person",
-        "name": imageData.author
-      } : undefined,
-      "provider": {
-        "@type": "Organization",
-        "name": "Adobe Stock",
-        "url": "https://stock.adobe.com"
-      },
-      "category": imageData?.category_hierarchy,
-      "encodingFormat": imageData?.media_type_label
-    });
-    document.head.appendChild(script);
+    if (isLoading) return;
 
-    // Add meta refresh fallback
-    const metaRefresh = document.createElement("meta");
-    metaRefresh.httpEquiv = "refresh";
-    metaRefresh.content = `11;url=${adobeUrl}`;
-    document.head.appendChild(metaRefresh);
+    const timer = setTimeout(() => {
+      setRedirecting(true);
+      window.location.href = adobeUrl;
+    }, 10000);
 
-    // Perform redirect after delay (only after data is loaded or error)
-    if (!isLoading) {
-      const timer = setTimeout(() => {
-        setRedirecting(true);
-        window.location.href = adobeUrl;
-      }, 10000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isLoading, adobeUrl]);
 
-      return () => {
-        clearTimeout(timer);
-        document.head.removeChild(script);
-        document.head.removeChild(metaRefresh);
-      };
-    }
-  }, [id, adobeUrl, imageData, isLoading]);
-
-  // Countdown timer effect
+  // Countdown timer effect (single interval controlled by isLoading)
   useEffect(() => {
-    if (!isLoading && countdown > 0) {
-      const interval = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
+    if (isLoading) return;
+    if (countdown <= 0) return;
 
-      return () => clearInterval(interval);
-    }
-  }, [isLoading, countdown]);
+    const interval = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]); // intentionally not depending on countdown to avoid resetting the interval
+
+  // Prepare structured data for Helmet when imageData available
+  const structuredData = imageData ? {
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    "name": imageData.title || `Stock Image ${id}`,
+    "description": imageData.meta_description || `Professional stock image ${id}`,
+    "contentUrl": adobeUrl,
+    "thumbnailUrl": imageData.content_thumb_large_url,
+    "url": `https://imgkey.lovable.app/stock/${id}`,
+    "identifier": id,
+    "keywords": Array.isArray(imageData.keywords) ? imageData.keywords.join(", ") : undefined,
+    "author": {
+      "@type": "Person",
+      "name": imageData.author
+    },
+    "provider": {
+      "@type": "Organization",
+      "name": "Adobe Stock",
+      "url": "https://stock.adobe.com"
+    },
+    "category": imageData.category_hierarchy,
+    "encodingFormat": imageData.media_type_label
+  } : null;
 
   return (
     <>
@@ -109,7 +105,7 @@ export default function StockImageRedirect() {
         <Helmet>
           <title>{`${imageData.title} - ${imageData.author} | ImgKey606`}</title>
           <meta name="description" content={imageData.meta_description} />
-          <meta name="keywords" content={imageData.keywords.join(", ")} />
+          <meta name="keywords" content={imageData.keywords?.join(", ")} />
           <meta name="author" content={imageData.author} />
           
           <meta property="og:title" content={`${imageData.title} by ${imageData.author}`} />
@@ -122,7 +118,13 @@ export default function StockImageRedirect() {
           <meta name="twitter:title" content={`${imageData.title} by ${imageData.author}`} />
           <meta name="twitter:description" content={imageData.meta_description} />
           <meta name="twitter:image" content={imageData.content_thumb_large_url} />
-          
+
+          {/* Structured data and meta refresh are handled by Helmet now */}
+          {structuredData && (
+            <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
+          )}
+          <meta httpEquiv="refresh" content={`11;url=${adobeUrl}`} />
+
           <link rel="canonical" href={`https://imgkey.lovable.app/stock/${id}`} />
         </Helmet>
       )}
@@ -205,7 +207,7 @@ export default function StockImageRedirect() {
               </p>
 
               {/* Keywords */}
-              {imageData.keywords.length > 0 && (
+              {imageData.keywords?.length > 0 && (
                 <div className="flex flex-wrap gap-2 justify-center">
                   {imageData.keywords.slice(0, 10).map((keyword, index) => (
                     <Badge key={index} variant="outline" className="text-xs">
