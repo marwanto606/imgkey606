@@ -101,33 +101,74 @@ export default function StockImageRedirect() {
 
   return (
     <>
-      {imageData && (
-        <Helmet>
-          <title>{`${imageData.title} - ${imageData.author} | ImgKey606`}</title>
-          <meta name="description" content={imageData.meta_description} />
-          <meta name="keywords" content={imageData.keywords?.join(", ")} />
-          <meta name="author" content={imageData.author} />
-          
-          <meta property="og:title" content={`${imageData.title} by ${imageData.author}`} />
-          <meta property="og:description" content={imageData.meta_description} />
-          <meta property="og:image" content={imageData.content_thumb_large_url} />
-          <meta property="og:type" content="article" />
+      {/* PERBAIKAN: Helmet selalu di-render dengan fallback values */}
+      <Helmet>
+        <title>
+          {imageData 
+            ? `${imageData.title} - ${imageData.author} | ImgKey606` 
+            : `Stock Image ${id} | ImgKey606`}
+        </title>
+        <meta 
+          name="description" 
+          content={imageData?.meta_description || `Professional stock image ${id} from Adobe Stock`} 
+        />
+        <meta 
+          name="keywords" 
+          content={imageData?.keywords?.join(", ") || "stock images, photography, adobe stock"} 
+        />
+        <meta 
+          name="author" 
+          content={imageData?.author || "ImgKey606"} 
+        />
+        
+        {/* Open Graph Tags */}
+        <meta 
+          property="og:title" 
+          content={imageData 
+            ? `${imageData.title} by ${imageData.author}` 
+            : `Stock Image ${id}`} 
+        />
+        <meta 
+          property="og:description" 
+          content={imageData?.meta_description || `Professional stock image ${id} from Adobe Stock`} 
+        />
+        <meta 
+          property="og:image" 
+          content={imageData?.content_thumb_large_url || "https://lovable.dev/opengraph-image-p98pqg.png"} 
+        />
+        <meta property="og:type" content="article" />
+        {imageData?.author && (
           <meta property="article:author" content={imageData.author} />
-          
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content={`${imageData.title} by ${imageData.author}`} />
-          <meta name="twitter:description" content={imageData.meta_description} />
-          <meta name="twitter:image" content={imageData.content_thumb_large_url} />
+        )}
+        
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta 
+          name="twitter:title" 
+          content={imageData 
+            ? `${imageData.title} by ${imageData.author}` 
+            : `Stock Image ${id}`} 
+        />
+        <meta 
+          name="twitter:description" 
+          content={imageData?.meta_description || `Professional stock image ${id} from Adobe Stock`} 
+        />
+        <meta 
+          name="twitter:image" 
+          content={imageData?.content_thumb_large_url || "https://lovable.dev/opengraph-image-p98pqg.png"} 
+        />
 
-          {/* Structured data and meta refresh are handled by Helmet now */}
-          {structuredData && (
-            <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
-          )}
-          <meta httpEquiv="refresh" content={`11;url=${adobeUrl}`} />
+        {/* Structured Data */}
+        {structuredData && (
+          <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
+        )}
+        
+        {/* Meta Refresh */}
+        <meta httpEquiv="refresh" content={`11;url=${adobeUrl}`} />
 
-          <link rel="canonical" href={`https://imgkey.lovable.app/stock/${id}`} />
-        </Helmet>
-      )}
+        {/* Canonical URL */}
+        <link rel="canonical" href={`https://imgkey.lovable.app/stock/${id}`} />
+      </Helmet>
 
       <noscript>
         <meta httpEquiv="refresh" content={`0;url=${adobeUrl}`} />
