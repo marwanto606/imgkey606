@@ -81,22 +81,24 @@ export default function StockImageRedirect() {
     "@type": "ImageObject",
     "name": imageData.title || `Stock Image ${id}`,
     "description": imageData.meta_description || `Professional stock image ${id}`,
-    "contentUrl": adobeUrl,
-    "thumbnailUrl": imageData.content_thumb_large_url,
+    "contentUrl": imageData.content_thumb_large_url,
     "url": `https://imgkey.lovable.app/stock/${id}`,
-    "identifier": id,
-    "keywords": Array.isArray(imageData.keywords) ? imageData.keywords.join(", ") : undefined,
-    "author": {
+    "creator": {
       "@type": "Person",
       "name": imageData.author
     },
+    "creditText": imageData.author,
+    "copyrightNotice": `© ${imageData.author} - Adobe Stock`,
+    "acquireLicensePage": adobeUrl,
+    "license": "https://stock.adobe.com/license-terms",
+    ...(Array.isArray(imageData.keywords) && imageData.keywords.length > 0 && {
+      "keywords": imageData.keywords.join(", ")
+    }),
     "provider": {
       "@type": "Organization",
       "name": "Adobe Stock",
       "url": "https://stock.adobe.com"
-    },
-    "category": imageData.category_hierarchy,
-    "encodingFormat": imageData.media_type_label
+    }
   } : null;
 
   return (
