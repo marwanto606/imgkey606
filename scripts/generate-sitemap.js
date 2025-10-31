@@ -26,7 +26,7 @@ const __dirname = path.dirname(__filename);
 
 // Configuration
 const BASE_URL = 'https://imgkey.lovable.app';
-const API_BASE_URL = 'https://st-apis.gallery606.workers.dev/creator';
+const API_BASE_URL = 'https://st-apis.marwanto606.qzz.io/creator';
 const TOTAL_PAGES = 11; // 1077 images / 100 per page ≈ 11 pages
 const PUBLIC_DIR = path.join(__dirname, '../public');
 

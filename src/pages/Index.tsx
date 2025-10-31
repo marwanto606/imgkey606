@@ -29,7 +29,7 @@ interface ApiResponse {
 }
 
 const fetchImages = async (page: number): Promise<ApiResponse> => {
-  const response = await fetch(`https://st-apis.gallery606.workers.dev/creator?search_page=${page}`)
+  const response = await fetch(`https://st-apis.marwanto606.qzz.io/creator?search_page=${page}`)
   if (!response.ok) {
     throw new Error('Failed to fetch images')
   }

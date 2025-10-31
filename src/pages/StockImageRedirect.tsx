@@ -19,7 +19,7 @@ interface ImageApiResponse {
 
 const fetchImageData = async (id: string): Promise<ImageApiResponse> => {
   const response = await fetch(
-    `https://st-apis.gallery606.workers.dev/Ajax/MediaData/${id}?full=1`
+    `https://st-apis.marwanto606.qzz.io/Ajax/MediaData/${id}?full=1`
   );
   if (!response.ok) throw new Error('Failed to fetch image data');
   return response.json();

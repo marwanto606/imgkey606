@@ -24,7 +24,7 @@ interface ApiResponse {
 }
 
 const fetchInspireImages = async (query: string, page: number): Promise<ApiResponse> => {
-  const response = await fetch(`https://sch-apis.gallery606.workers.dev/?q=${encodeURIComponent(query)}&page=${page}`)
+  const response = await fetch(`https://sch-apis.marwanto606.qzz.io/?q=${encodeURIComponent(query)}&page=${page}`)
   if (!response.ok) {
     throw new Error('Failed to fetch images')
   }

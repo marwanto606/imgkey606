@@ -41,7 +41,7 @@ Edit `generate-sitemap.js` jika perlu mengubah:
 
 ```javascript
 const BASE_URL = 'https://imgkey.lovable.app';
-const API_BASE_URL = 'https://st-apis.gallery606.workers.dev/creator';
+const API_BASE_URL = 'https://st-apis.marwanto606.qzz.io/creator';
 const TOTAL_PAGES = 11; // Adjust based on total images
 ```
 
