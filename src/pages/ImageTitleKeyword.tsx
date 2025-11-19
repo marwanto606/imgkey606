@@ -214,7 +214,31 @@ const ImageTitleKeyword = () => {
       }
     } catch (error) {
       console.error('Error generating title and keywords:', error)
-      toast.error("Failed to generate title and keywords. Please check your API key and try again.")
+      
+      // Provide more specific error messages
+      let errorMessage = "Failed to generate title and keywords. "
+      
+      if (error instanceof Error) {
+        if (error.message.includes('401') || error.message.includes('403')) {
+          errorMessage += "API key tidak valid. Pastikan API key Gemini Anda benar."
+        } else if (error.message.includes('429')) {
+          errorMessage += "Quota API tercapai. Tunggu beberapa saat atau periksa limit API Anda."
+        } else if (error.message.includes('400')) {
+          errorMessage += "Request tidak valid. Periksa format gambar atau ukuran file."
+        } else if (error.message.includes('500') || error.message.includes('503')) {
+          errorMessage += "Server Gemini mengalami masalah. Coba lagi nanti."
+        } else if (error.message.includes('parse') || error.message.includes('Invalid JSON')) {
+          errorMessage += "Format respons dari API tidak sesuai. Coba model lain."
+        } else if (error.message.includes('Failed to fetch') || error.message.includes('network')) {
+          errorMessage += "Koneksi internet bermasalah. Periksa koneksi Anda."
+        } else {
+          errorMessage += error.message
+        }
+      } else {
+        errorMessage += "Terjadi kesalahan tidak terduga. Coba lagi."
+      }
+      
+      toast.error(errorMessage, { duration: 5000 })
     } finally {
       setIsLoading(false)
     }

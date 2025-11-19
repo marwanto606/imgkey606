@@ -254,7 +254,13 @@ const ImageInspire = () => {
           {error && (
             <Alert className="mb-8 border-destructive/50 text-destructive">
               <AlertDescription>
-                Failed to load images. Please try again later.
+                {error instanceof Error && error.message.includes('Failed to fetch')
+                  ? "Koneksi internet bermasalah atau server tidak dapat dijangkau. Periksa koneksi Anda dan coba lagi."
+                  : error instanceof Error && error.message.includes('429')
+                  ? "Terlalu banyak permintaan. Tunggu beberapa saat sebelum mencoba lagi."
+                  : error instanceof Error && error.message.includes('500')
+                  ? "Server mengalami masalah. Silakan coba lagi nanti."
+                  : "Gagal memuat gambar. Periksa koneksi internet Anda atau coba kata kunci lain."}
                 <button 
                   onClick={() => refetch()} 
                   className="ml-2 underline hover:no-underline"
