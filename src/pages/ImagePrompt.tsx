@@ -19,7 +19,8 @@ const GEMINI_MODELS = [
   { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash Lite 🚀", description: "Tercepat & terhemat" },
   
   // Gemini 2.0
-  { value: "gemini-2.0-flash-exp", label: "Gemini 2.0 Flash (Experimental)", description: "Fitur cutting-edge" },
+  { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash", description: "Model stabil generasi sebelumnya" },
+  { value: "gemini-2.0-flash-lite", label: "Gemini 2.0 Flash Lite", description: "Versi ringan & hemat" },
 ]
 
 const ImagePrompt = () => {
