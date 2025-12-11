@@ -172,7 +172,31 @@ export const PromptSidebar = ({ isOpen, onClose, imageUrl }: PromptSidebarProps)
       }
     } catch (error) {
       console.error('Error generating image prompt:', error)
-      toast.error("Failed to generate image prompt. Please check your API key and try again.")
+      
+      // Provide more specific error messages
+      let errorMessage = "Failed to generate image prompt. "
+      
+      if (error instanceof Error) {
+        if (error.message.includes('401') || error.message.includes('403')) {
+          errorMessage += "API key tidak valid. Pastikan API key Gemini Anda benar."
+        } else if (error.message.includes('429')) {
+          errorMessage += "Quota API tercapai. Tunggu beberapa saat atau periksa limit API Anda."
+        } else if (error.message.includes('400')) {
+          errorMessage += "Request tidak valid. Periksa format gambar atau ukuran file."
+        } else if (error.message.includes('500') || error.message.includes('503')) {
+          errorMessage += "Server Gemini mengalami masalah. Coba lagi nanti."
+        } else if (error.message.includes('Invalid API response')) {
+          errorMessage += "Format respons dari API tidak sesuai. Coba model lain."
+        } else if (error.message.includes('Failed to fetch') || error.message.includes('network')) {
+          errorMessage += "Koneksi internet bermasalah. Periksa koneksi Anda."
+        } else {
+          errorMessage += error.message
+        }
+      } else {
+        errorMessage += "Terjadi kesalahan tidak terduga. Coba lagi."
+      }
+      
+      toast.error(errorMessage, { duration: 5000 })
     } finally {
       setIsLoading(false)
     }
