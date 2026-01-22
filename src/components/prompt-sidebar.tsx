@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
-import { GEMINI_MODELS } from "@/lib/gemini-models"
+import { GEMINI_MODELS, DEFAULT_GEMINI_MODEL } from "@/lib/gemini-models"
 
 interface PromptSidebarProps {
   isOpen: boolean
@@ -20,7 +20,7 @@ export const PromptSidebar = ({ isOpen, onClose, imageUrl }: PromptSidebarProps)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(imageUrl || null)
   const [apiKey, setApiKey] = useState(() => localStorage.getItem("gemini-api-key") || "")
-  const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash")
+  const [selectedModel, setSelectedModel] = useState(DEFAULT_GEMINI_MODEL)
   const [isLoading, setIsLoading] = useState(false)
   const [prompt, setPrompt] = useState<string | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
@@ -39,8 +39,7 @@ export const PromptSidebar = ({ isOpen, onClose, imageUrl }: PromptSidebarProps)
           const file = new File([blob], 'inspired-image.jpg', { type: 'image/jpeg' })
           setSelectedImage(file)
         })
-        .catch(err => {
-          console.error('Failed to load image from URL:', err)
+        .catch(() => {
           toast.error("Failed to load the inspired image")
         })
     }
@@ -171,8 +170,6 @@ export const PromptSidebar = ({ isOpen, onClose, imageUrl }: PromptSidebarProps)
         throw new Error("Invalid API response format")
       }
     } catch (error) {
-      console.error('Error generating image prompt:', error)
-      
       // Provide more specific error messages
       let errorMessage = "Failed to generate image prompt. "
       

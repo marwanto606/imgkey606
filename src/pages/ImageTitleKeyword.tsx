@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { Header } from "@/components/header"
-import { GEMINI_MODELS } from "@/lib/gemini-models"
+import { GEMINI_MODELS, DEFAULT_GEMINI_MODEL } from "@/lib/gemini-models"
 
 interface AnalysisResult {
   title: string
@@ -29,7 +29,7 @@ const ImageTitleKeyword = () => {
   })
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [apiKey, setApiKey] = useState(() => localStorage.getItem("gemini-api-key") || "")
-  const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash")
+  const [selectedModel, setSelectedModel] = useState(DEFAULT_GEMINI_MODEL)
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
@@ -38,8 +38,8 @@ const ImageTitleKeyword = () => {
   const [showApiKey, setShowApiKey] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleSearch = (query: string) => {
-    console.log('Search query:', query)
+  const handleSearch = (_query: string) => {
+    // Search handled by Header component
   }
 
   const handleApiKeyChange = (value: string) => {
@@ -164,9 +164,6 @@ const ImageTitleKeyword = () => {
 
       const data = await response.json()
       
-      // Debug: Log full response for troubleshooting
-      console.log("Full API Response:", JSON.stringify(data, null, 2))
-      
       // Check for different response structures (some models use different formats)
       let text = ""
       
@@ -189,14 +186,7 @@ const ImageTitleKeyword = () => {
         text = typeof data.content === 'string' ? data.content : JSON.stringify(data.content)
       }
       
-      console.log("Extracted text:", text)
-      
       if (!text) {
-        // Log the actual structure for debugging
-        console.error("Unable to extract text from response. Structure:", Object.keys(data))
-        if (data.candidates) {
-          console.error("Candidates structure:", JSON.stringify(data.candidates, null, 2))
-        }
         throw new Error("Invalid API response format - no text content found")
       }
       
@@ -221,7 +211,6 @@ const ImageTitleKeyword = () => {
             })
             toast.success("Title and keywords generated successfully!")
           } else {
-            console.error("JSON structure missing title or keywords:", parsedResult)
             throw new Error("Invalid JSON structure - missing title or keywords")
           }
         } else {
