@@ -164,44 +164,86 @@ const ImageTitleKeyword = () => {
 
       const data = await response.json()
       
+      // Debug: Log full response for troubleshooting
+      console.log("Full API Response:", JSON.stringify(data, null, 2))
+      
+      // Check for different response structures (some models use different formats)
+      let text = ""
+      
       if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-        const text = data.candidates[0].content.parts[0].text
-        
-        try {
-          // Try to parse as JSON first
-          const jsonMatch = text.match(/\{[\s\S]*\}/)
-          if (jsonMatch) {
-            const parsedResult = JSON.parse(jsonMatch[0])
-            if (parsedResult.title && parsedResult.keywords) {
-              setResult({
-                title: parsedResult.title,
-                keywords: parsedResult.keywords
-              })
-              toast.success("Title and keywords generated successfully!")
-            } else {
-              throw new Error("Invalid JSON structure")
-            }
-          } else {
-            // Fallback to old parsing method
-            const titleMatch = text.match(/Title:\s*(.+)/i)
-            const keywordsMatch = text.match(/Keywords:\s*(.+)/i)
-            
-            if (titleMatch && keywordsMatch) {
-              const title = titleMatch[1].trim()
-              const keywords = keywordsMatch[1].split(',').map(k => k.trim()).filter(k => k.length > 0)
-              
-              setResult({ title, keywords })
-              toast.success("Title and keywords generated successfully!")
-            } else {
-              throw new Error("Failed to parse API response")
-            }
+        // Standard Gemini response format
+        text = data.candidates[0].content.parts[0].text
+      } else if (data.candidates && data.candidates[0]?.content?.parts) {
+        // Some models return parts as array with different structure
+        const parts = data.candidates[0].content.parts
+        for (const part of parts) {
+          if (part.text) {
+            text += part.text
           }
-        } catch (parseError) {
-          console.error("Parse error:", parseError)
-          throw new Error("Failed to parse API response")
         }
-      } else {
-        throw new Error("Invalid API response format")
+      } else if (data.text) {
+        // Direct text response
+        text = data.text
+      } else if (data.content) {
+        // Content wrapper
+        text = typeof data.content === 'string' ? data.content : JSON.stringify(data.content)
+      }
+      
+      console.log("Extracted text:", text)
+      
+      if (!text) {
+        // Log the actual structure for debugging
+        console.error("Unable to extract text from response. Structure:", Object.keys(data))
+        if (data.candidates) {
+          console.error("Candidates structure:", JSON.stringify(data.candidates, null, 2))
+        }
+        throw new Error("Invalid API response format - no text content found")
+      }
+      
+      try {
+        // Try to parse as JSON first - handle markdown code blocks
+        let jsonText = text
+        
+        // Remove markdown code blocks if present (```json ... ``` or ``` ... ```)
+        const codeBlockMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/)
+        if (codeBlockMatch) {
+          jsonText = codeBlockMatch[1].trim()
+        }
+        
+        // Try to find JSON object
+        const jsonMatch = jsonText.match(/\{[\s\S]*\}/)
+        if (jsonMatch) {
+          const parsedResult = JSON.parse(jsonMatch[0])
+          if (parsedResult.title && parsedResult.keywords) {
+            setResult({
+              title: parsedResult.title,
+              keywords: Array.isArray(parsedResult.keywords) ? parsedResult.keywords : [parsedResult.keywords]
+            })
+            toast.success("Title and keywords generated successfully!")
+          } else {
+            console.error("JSON structure missing title or keywords:", parsedResult)
+            throw new Error("Invalid JSON structure - missing title or keywords")
+          }
+        } else {
+          // Fallback to old parsing method
+          const titleMatch = text.match(/Title:\s*(.+)/i)
+          const keywordsMatch = text.match(/Keywords:\s*(.+)/i)
+          
+          if (titleMatch && keywordsMatch) {
+            const title = titleMatch[1].trim()
+            const keywords = keywordsMatch[1].split(',').map(k => k.trim()).filter(k => k.length > 0)
+            
+            setResult({ title, keywords })
+            toast.success("Title and keywords generated successfully!")
+          } else {
+            console.error("Could not parse response text:", text.substring(0, 500))
+            throw new Error("Failed to parse API response - no valid format detected")
+          }
+        }
+      } catch (parseError) {
+        console.error("Parse error:", parseError)
+        console.error("Raw text that failed to parse:", text.substring(0, 1000))
+        throw new Error("Failed to parse API response")
       }
     } catch (error) {
       console.error('Error generating title and keywords:', error)
