@@ -125,8 +125,8 @@ const ImageInspire = () => {
     setHasSubmitted(true)
   }
 
-  const handleHeaderSearch = (query: string) => {
-    console.log('Header search query:', query)
+  const handleHeaderSearch = (_query: string) => {
+    // Search handled by Header component
   }
 
   const handleInspireClick = (imageUrl: string) => {

@@ -77,9 +77,8 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const handleSearch = (query: string) => {
-    // Search is handled by the Header component
-    console.log('Search query:', query)
+  const handleSearch = (_query: string) => {
+    // Search handled by Header component
   }
 
   const images = data ? Object.values(data.items) : []
