@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useState, useEffect, useRef, useCallback } from "react"
+import { useInfiniteQuery } from "@tanstack/react-query"
 import { Header } from "@/components/header"
 import { ImageCard } from "@/components/image-card"
 import { BackToTop } from "@/components/back-to-top"
-import { Pagination } from "@/components/pagination"
-import { LoadingSkeleton } from "@/components/loading-skeleton"
+import { InfiniteScrollSkeleton } from "@/components/infinite-scroll-skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, Images } from "lucide-react"
+import { AlertCircle, Images, Loader2 } from "lucide-react"
 import { useSEO } from "@/hooks/use-seo"
 
 interface ImageData {
@@ -37,10 +36,8 @@ const fetchImages = async (page: number): Promise<ApiResponse> => {
 }
 
 const Index = () => {
-  const [currentPage, setCurrentPage] = useState(() => {
-    const savedPage = sessionStorage.getItem('imgkey-current-page')
-    return savedPage ? parseInt(savedPage, 10) : 1
-  })
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const loadMoreRef = useRef<HTMLDivElement | null>(null)
 
   // SEO Configuration
   useSEO({
@@ -50,38 +47,60 @@ const Index = () => {
     canonical: "https://imgkey.lovable.app/"
   })
 
-  // Handle browser back/forward navigation
-  useEffect(() => {
-    const handlePopState = () => {
-      const savedPage = sessionStorage.getItem('imgkey-current-page')
-      if (savedPage) {
-        setCurrentPage(parseInt(savedPage, 10))
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
+    queryKey: ['images-infinite'],
+    queryFn: ({ pageParam = 1 }) => fetchImages(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const currentPage = allPages.length
+      if (currentPage < lastPage.num_pages) {
+        return currentPage + 1
       }
-    }
-
-    window.addEventListener('popstate', handlePopState)
-    return () => window.removeEventListener('popstate', handlePopState)
-  }, [])
-
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['images', currentPage],
-    queryFn: () => fetchImages(currentPage),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 3
+      return undefined
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: 3,
   })
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-    sessionStorage.setItem('imgkey-current-page', page.toString())
-    window.history.pushState({ page }, '', window.location.pathname)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  // Intersection Observer for infinite scroll
+  const lastElementRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (isFetchingNextPage) return
+      
+      if (observerRef.current) {
+        observerRef.current.disconnect()
+      }
+      
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && hasNextPage) {
+            fetchNextPage()
+          }
+        },
+        { threshold: 0.1, rootMargin: '100px' }
+      )
+      
+      if (node) {
+        observerRef.current.observe(node)
+      }
+    },
+    [isFetchingNextPage, hasNextPage, fetchNextPage]
+  )
 
   const handleSearch = (_query: string) => {
     // Search handled by Header component
   }
 
-  const images = data ? Object.values(data.items) : []
+  // Flatten all pages into single array
+  const images = data?.pages.flatMap(page => Object.values(page.items)) ?? []
 
   return (
     <div className="min-h-screen bg-background">
@@ -117,7 +136,7 @@ const Index = () => {
         )}
 
         {/* Loading State */}
-        {isLoading && <LoadingSkeleton />}
+        {isLoading && <InfiniteScrollSkeleton />}
 
         {/* Images Grid */}
         {!isLoading && !error && images.length > 0 && (
@@ -128,14 +147,20 @@ const Index = () => {
               ))}
             </div>
 
-            {/* Pagination */}
-            {data && data.num_pages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={data.num_pages}
-                onPageChange={handlePageChange}
-              />
-            )}
+            {/* Infinite Scroll Trigger */}
+            <div ref={lastElementRef} className="w-full py-8 flex justify-center">
+              {isFetchingNextPage && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span>Loading more images...</span>
+                </div>
+              )}
+              {!hasNextPage && images.length > 0 && (
+                <p className="text-muted-foreground text-sm">
+                  You've reached the end! 🎉
+                </p>
+              )}
+            </div>
           </>
         )}
 
