@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Loader2, ExternalLink, Camera } from "lucide-react";
+import { Loader2, Camera, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 
 interface ImageApiResponse {
@@ -27,8 +25,6 @@ const fetchImageData = async (id: string): Promise<ImageApiResponse> => {
 
 export default function StockImageRedirect() {
   const { id } = useParams<{ id: string }>();
-  const [redirecting, setRedirecting] = useState(false);
-  const [countdown, setCountdown] = useState(10);
   
   if (!id) {
     return <Navigate to="/" replace />;
@@ -42,38 +38,6 @@ export default function StockImageRedirect() {
     retry: 1,
   });
 
-  // Redirect timer (trigger only after loading finished)
-  useEffect(() => {
-    if (isLoading) return;
-
-    const timer = setTimeout(() => {
-      setRedirecting(true);
-      window.location.href = adobeUrl;
-    }, 10000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [isLoading, adobeUrl]);
-
-  // Countdown timer effect (single interval controlled by isLoading)
-  useEffect(() => {
-    if (isLoading) return;
-    if (countdown <= 0) return;
-
-    const interval = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]); // intentionally not depending on countdown to avoid resetting the interval
 
   // Prepare structured data for Helmet when imageData available
   const structuredData = imageData ? {
@@ -165,17 +129,11 @@ export default function StockImageRedirect() {
           <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
         )}
         
-        {/* Meta Refresh */}
-        <meta httpEquiv="refresh" content={`11;url=${adobeUrl}`} />
 
         {/* Canonical URL */}
         <link rel="canonical" href={`https://imgkey.lovable.app/stock/${id}`} />
       </Helmet>
 
-      <noscript>
-        <meta httpEquiv="refresh" content={`0;url=${adobeUrl}`} />
-        <p>Redirecting to <a href={adobeUrl}>Adobe Stock</a></p>
-      </noscript>
       
       <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
         <div className="max-w-2xl w-full space-y-6">
@@ -220,14 +178,18 @@ export default function StockImageRedirect() {
               </div>
 
               {/* CTA Button */}
-              <Button 
-                onClick={() => window.location.href = adobeUrl}
-                size="lg"
-                className="w-full sm:w-auto"
+              <a
+                href={adobeUrl}
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+                className="group relative inline-flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-primary via-primary/90 to-primary/80 px-8 py-5 text-lg font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98] w-full sm:w-auto"
               >
-                <ExternalLink className="mr-2 h-5 w-5" />
-                Purchase on Adobe Stock
-              </Button>
+                <ShoppingCart className="h-6 w-6 transition-transform duration-300 group-hover:-translate-y-0.5" />
+                <span>Purchase on Adobe Stock</span>
+                <svg className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </a>
 
               {/* Title */}
               <h1 className="text-3xl font-bold leading-tight">
@@ -260,31 +222,6 @@ export default function StockImageRedirect() {
                 </div>
               )}
 
-              {/* Redirect Status with Countdown */}
-              <div className="space-y-3 pt-4" data-nosnippet>
-                {redirecting ? (
-                  <p className="text-primary font-medium" aria-live="polite">Redirecting now...</p>
-                ) : (
-                  <>
-                    <div className="flex items-center justify-center gap-3">
-                      <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                      <p className="text-lg font-semibold text-foreground" aria-live="polite">
-                        Redirecting in {countdown}s
-                      </p>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      You'll be taken to Adobe Stock shortly
-                    </p>
-                  </>
-                )}
-                <a 
-                  href={adobeUrl}
-                  className="text-sm text-primary hover:underline block"
-                  rel="nofollow noopener"
-                >
-                  Click here if you are not redirected automatically
-                </a>
-              </div>
             </div>
           ) : null}
         </div>
