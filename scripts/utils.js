@@ -30,7 +30,7 @@ export function escapeXml(unsafe) {
  * @returns {string} XML declaration
  */
 export function generateXmlHeader() {
-  return '<?xml version="1.0" encoding="UTF-8"?>';
+  return '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>';
 }
 
 /**
