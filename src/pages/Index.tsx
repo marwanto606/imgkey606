@@ -99,7 +99,7 @@ const Index = () => {
   }
 
   // Flatten all pages into single array
-  const images = data?.pages.flatMap(page => Object.values(page.items)) ?? []
+  const images = data?.pages.flatMap(page => page.files ?? []) ?? []
 
   return (
     <div className="min-h-screen bg-background">
