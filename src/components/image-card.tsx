@@ -5,10 +5,11 @@ import { Badge } from "@/components/ui/badge"
 import { Link } from "react-router-dom"
 
 interface ImageData {
-  content_id: number
+  id: number
   title: string
-  content_thumb_large_url: string
-  author: string
+  thumbnail_500_url: string
+  creator_name: string
+  creator_id: number
   category: {
     id: number
     name: string
