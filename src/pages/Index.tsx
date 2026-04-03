@@ -59,9 +59,8 @@ const Index = () => {
     queryFn: ({ pageParam = 1 }) => fetchImages(pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      const currentPage = allPages.length
-      if (currentPage < lastPage.num_pages) {
-        return currentPage + 1
+      if (lastPage.files && lastPage.files.length > 0) {
+        return allPages.length + 1
       }
       return undefined
     },
