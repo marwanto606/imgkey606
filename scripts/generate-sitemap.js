@@ -28,7 +28,7 @@ const __dirname = path.dirname(__filename);
 const BASE_URL = 'https://imgkey.lovable.app';
 const API_BASE_URL = 'https://st-apis.marwanto606.qzz.io/creator';
 const ITEMS_PER_PAGE = 100;
-const PUBLIC_DIR = path.join(__dirname, '../public');
+
 
 /**
  * Fetch all images from API (dynamic pagination based on nb_results)
