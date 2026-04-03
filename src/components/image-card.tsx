@@ -28,7 +28,7 @@ export function ImageCard({ image }: ImageCardProps) {
       <Link to={stockUrl}>
         <div className="relative overflow-hidden">
           <img
-            src={image.content_thumb_large_url}
+            src={image.thumbnail_500_url}
             alt={image.title}
             className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
