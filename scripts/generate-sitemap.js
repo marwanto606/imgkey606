@@ -23,6 +23,7 @@ import {
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 
 // Configuration
 const BASE_URL = 'https://imgkey.lovable.app';
