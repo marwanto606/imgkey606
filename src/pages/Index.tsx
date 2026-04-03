@@ -9,10 +9,11 @@ import { AlertCircle, Images, Loader2 } from "lucide-react"
 import { useSEO } from "@/hooks/use-seo"
 
 interface ImageData {
-  content_id: number
+  id: number
   title: string
-  content_thumb_large_url: string
-  author: string
+  thumbnail_500_url: string
+  creator_name: string
+  creator_id: number
   category: {
     id: number
     name: string
@@ -20,11 +21,9 @@ interface ImageData {
 }
 
 interface ApiResponse {
-  total_items: number
-  items: Record<string, ImageData>
-  total: number
-  num_pages: number
-  search_page: number
+  files: ImageData[]
+  total_items?: number
+  num_pages?: number
 }
 
 const fetchImages = async (page: number): Promise<ApiResponse> => {
