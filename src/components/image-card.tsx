@@ -55,7 +55,7 @@ export function ImageCard({ image }: ImageCardProps) {
         <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
           <div className="flex items-center space-x-1">
             <User className="h-3 w-3" />
-            <span className="truncate">{image.author}</span>
+            <span className="truncate">{image.creator_name}</span>
           </div>
           <Badge variant="secondary" className="text-xs">
             <Tag className="h-3 w-3 mr-1" />
