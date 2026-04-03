@@ -9,10 +9,11 @@ import { AlertCircle, Images, Loader2 } from "lucide-react"
 import { useSEO } from "@/hooks/use-seo"
 
 interface ImageData {
-  content_id: number
+  id: number
   title: string
-  content_thumb_large_url: string
-  author: string
+  thumbnail_500_url: string
+  creator_name: string
+  creator_id: number
   category: {
     id: number
     name: string
@@ -20,11 +21,9 @@ interface ImageData {
 }
 
 interface ApiResponse {
-  total_items: number
-  items: Record<string, ImageData>
-  total: number
-  num_pages: number
-  search_page: number
+  files: ImageData[]
+  total_items?: number
+  num_pages?: number
 }
 
 const fetchImages = async (page: number): Promise<ApiResponse> => {
@@ -60,9 +59,8 @@ const Index = () => {
     queryFn: ({ pageParam = 1 }) => fetchImages(pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      const currentPage = allPages.length
-      if (currentPage < lastPage.num_pages) {
-        return currentPage + 1
+      if (lastPage.files && lastPage.files.length > 0) {
+        return allPages.length + 1
       }
       return undefined
     },
@@ -100,7 +98,7 @@ const Index = () => {
   }
 
   // Flatten all pages into single array
-  const images = data?.pages.flatMap(page => Object.values(page.items)) ?? []
+  const images = data?.pages.flatMap(page => page.files ?? []) ?? []
 
   return (
     <div className="min-h-screen bg-background">
@@ -143,7 +141,7 @@ const Index = () => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {images.map((image) => (
-                <ImageCard key={image.content_id} image={image} />
+                <ImageCard key={image.id} image={image} />
               ))}
             </div>
 

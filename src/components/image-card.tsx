@@ -5,10 +5,11 @@ import { Badge } from "@/components/ui/badge"
 import { Link } from "react-router-dom"
 
 interface ImageData {
-  content_id: number
+  id: number
   title: string
-  content_thumb_large_url: string
-  author: string
+  thumbnail_500_url: string
+  creator_name: string
+  creator_id: number
   category: {
     id: number
     name: string
@@ -20,14 +21,14 @@ interface ImageCardProps {
 }
 
 export function ImageCard({ image }: ImageCardProps) {
-  const stockUrl = `/stock/${image.content_id}`;
+  const stockUrl = `/stock/${image.id}`;
 
   return (
     <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:shadow-primary/10">
       <Link to={stockUrl}>
         <div className="relative overflow-hidden">
           <img
-            src={image.content_thumb_large_url}
+            src={image.thumbnail_500_url}
             alt={image.title}
             className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
@@ -54,7 +55,7 @@ export function ImageCard({ image }: ImageCardProps) {
         <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
           <div className="flex items-center space-x-1">
             <User className="h-3 w-3" />
-            <span className="truncate">{image.author}</span>
+            <span className="truncate">{image.creator_name}</span>
           </div>
           <Badge variant="secondary" className="text-xs">
             <Tag className="h-3 w-3 mr-1" />
