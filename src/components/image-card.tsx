@@ -21,7 +21,7 @@ interface ImageCardProps {
 }
 
 export function ImageCard({ image }: ImageCardProps) {
-  const stockUrl = `/stock/${image.content_id}`;
+  const stockUrl = `/stock/${image.id}`;
 
   return (
     <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:shadow-primary/10">
