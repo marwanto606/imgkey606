@@ -121,13 +121,13 @@ function generateImagesSitemap(images) {
   
   const urlEntries = images.map((image) => {
     const imageData = {
-      thumbnailUrl: image.thumbnail_url || '',
+      thumbnailUrl: image.thumbnail_500_url || '',
       title: image.title || 'Stock Image',
-      caption: image.author_name ? `by ${image.author_name}` : '',
+      caption: image.creator_name ? `by ${image.creator_name}` : '',
     };
     
     return generateUrlEntry(
-      `${BASE_URL}/stock/${image.content_id}`,
+      `${BASE_URL}/stock/${image.id}`,
       currentDate,
       'weekly',
       0.7,
