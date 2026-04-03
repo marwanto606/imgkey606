@@ -4,20 +4,28 @@ import { Loader2, Camera, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 
+interface ImageCategory {
+  id: number;
+  name: string;
+}
+
+interface ImageKeyword {
+  name: string;
+}
+
 interface ImageApiResponse {
-  keywords: string[];
-  content_id: number;
+  id: number;
   title: string;
-  content_thumb_large_url: string;
-  author: string;
-  meta_description: string;
-  media_type_label: string;
-  category_hierarchy: string;
+  thumbnail_500_url: string;
+  creator_name: string;
+  creator_id: number;
+  category: ImageCategory;
+  keywords: ImageKeyword[];
 }
 
 const fetchImageData = async (id: string): Promise<ImageApiResponse> => {
   const response = await fetch(
-    `https://st-apis.marwanto606.qzz.io/Ajax/MediaData/${id}?full=1`
+    `https://st-apis.marwanto606.qzz.io/media?id=${id}`
   );
   if (!response.ok) throw new Error('Failed to fetch image data');
   return response.json();
@@ -25,7 +33,7 @@ const fetchImageData = async (id: string): Promise<ImageApiResponse> => {
 
 export default function StockImageRedirect() {
   const { id } = useParams<{ id: string }>();
-  
+
   if (!id) {
     return <Navigate to="/" replace />;
   }
@@ -38,26 +46,27 @@ export default function StockImageRedirect() {
     retry: 1,
   });
 
+  const keywordNames = imageData?.keywords?.map(k => k.name) ?? [];
+  const metaDescription = imageData
+    ? `${imageData.title}. High-quality stock ${imageData.category?.name ?? 'image'} by ${imageData.creator_name}. Download and license on Adobe Stock.`
+    : `Professional stock image ${id} from Adobe Stock`;
 
-  // Prepare structured data for Helmet when imageData available
   const structuredData = imageData ? {
     "@context": "https://schema.org",
     "@type": "ImageObject",
-    "name": imageData.title || `Stock Image ${id}`,
-    "description": imageData.meta_description || `Professional stock image ${id}`,
-    "contentUrl": imageData.content_thumb_large_url,
+    "name": imageData.title,
+    "description": metaDescription,
+    "contentUrl": imageData.thumbnail_500_url,
     "url": `https://imgkey.lovable.app/stock/${id}`,
     "creator": {
       "@type": "Person",
-      "name": imageData.author
+      "name": imageData.creator_name
     },
-    "creditText": imageData.author,
-    "copyrightNotice": `© ${imageData.author} - Adobe Stock`,
+    "creditText": imageData.creator_name,
+    "copyrightNotice": `© ${imageData.creator_name} - Adobe Stock`,
     "acquireLicensePage": adobeUrl,
     "license": "https://stock.adobe.com/license-terms",
-    ...(Array.isArray(imageData.keywords) && imageData.keywords.length > 0 && {
-      "keywords": imageData.keywords.join(", ")
-    }),
+    ...(keywordNames.length > 0 && { "keywords": keywordNames.join(", ") }),
     "provider": {
       "@type": "Organization",
       "name": "Adobe Stock",
@@ -67,74 +76,51 @@ export default function StockImageRedirect() {
 
   return (
     <>
-      {/* PERBAIKAN: Helmet selalu di-render dengan fallback values */}
       <Helmet>
         <title>
-          {imageData 
-            ? `${imageData.title} - ${imageData.author} | ImgKey606` 
+          {imageData
+            ? `${imageData.title} - ${imageData.creator_name} | ImgKey606`
             : `Stock Image ${id} | ImgKey606`}
         </title>
-        <meta 
-          name="description" 
-          content={imageData?.meta_description || `Professional stock image ${id} from Adobe Stock`} 
+        <meta name="description" content={metaDescription} />
+        <meta
+          name="keywords"
+          content={keywordNames.length > 0 ? keywordNames.join(", ") : "stock images, photography, adobe stock"}
         />
-        <meta 
-          name="keywords" 
-          content={imageData?.keywords?.join(", ") || "stock images, photography, adobe stock"} 
+        <meta name="author" content={imageData?.creator_name || "ImgKey606"} />
+
+        <meta
+          property="og:title"
+          content={imageData ? `${imageData.title} by ${imageData.creator_name}` : `Stock Image ${id}`}
         />
-        <meta 
-          name="author" 
-          content={imageData?.author || "ImgKey606"} 
-        />
-        
-        {/* Open Graph Tags */}
-        <meta 
-          property="og:title" 
-          content={imageData 
-            ? `${imageData.title} by ${imageData.author}` 
-            : `Stock Image ${id}`} 
-        />
-        <meta 
-          property="og:description" 
-          content={imageData?.meta_description || `Professional stock image ${id} from Adobe Stock`} 
-        />
-        <meta 
-          property="og:image" 
-          content={imageData?.content_thumb_large_url || "https://lovable.dev/opengraph-image-p98pqg.png"} 
+        <meta property="og:description" content={metaDescription} />
+        <meta
+          property="og:image"
+          content={imageData?.thumbnail_500_url || "https://lovable.dev/opengraph-image-p98pqg.png"}
         />
         <meta property="og:type" content="article" />
-        {imageData?.author && (
-          <meta property="article:author" content={imageData.author} />
+        {imageData?.creator_name && (
+          <meta property="article:author" content={imageData.creator_name} />
         )}
-        
-        {/* Twitter Card Tags */}
+
         <meta name="twitter:card" content="summary_large_image" />
-        <meta 
-          name="twitter:title" 
-          content={imageData 
-            ? `${imageData.title} by ${imageData.author}` 
-            : `Stock Image ${id}`} 
+        <meta
+          name="twitter:title"
+          content={imageData ? `${imageData.title} by ${imageData.creator_name}` : `Stock Image ${id}`}
         />
-        <meta 
-          name="twitter:description" 
-          content={imageData?.meta_description || `Professional stock image ${id} from Adobe Stock`} 
-        />
-        <meta 
-          name="twitter:image" 
-          content={imageData?.content_thumb_large_url || "https://lovable.dev/opengraph-image-p98pqg.png"} 
+        <meta name="twitter:description" content={metaDescription} />
+        <meta
+          name="twitter:image"
+          content={imageData?.thumbnail_500_url || "https://lovable.dev/opengraph-image-p98pqg.png"}
         />
 
-        {/* Structured Data */}
         {structuredData && (
           <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
         )}
-        
 
-        {/* Canonical URL */}
         <link rel="canonical" href={`https://imgkey.lovable.app/stock/${id}`} />
       </Helmet>
 
-      
       <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
         <div className="max-w-2xl w-full space-y-6">
           {isLoading ? (
@@ -144,20 +130,18 @@ export default function StockImageRedirect() {
             </div>
           ) : isError ? (
             <div className="text-center space-y-4" data-nosnippet>
-              <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-              <p className="text-muted-foreground" aria-live="polite">Redirecting to Adobe Stock...</p>
-              <a 
+              <p className="text-muted-foreground">Failed to load image data.</p>
+              <a
                 href={adobeUrl}
                 className="text-sm text-primary hover:underline block"
                 rel="nofollow noopener"
               >
-                Click here if you are not redirected automatically
+                View on Adobe Stock instead
               </a>
             </div>
           ) : imageData ? (
             <div className="space-y-6 text-center">
-              {/* Site Name Link */}
-              <a 
+              <a
                 href="/"
                 className="inline-flex items-center space-x-2 hover:opacity-80 transition-opacity"
               >
@@ -167,17 +151,15 @@ export default function StockImageRedirect() {
                 </h1>
               </a>
 
-              {/* Image Preview */}
               <div className="relative w-full aspect-video overflow-hidden rounded-lg border bg-muted">
-                <img 
-                  src={imageData.content_thumb_large_url} 
+                <img
+                  src={imageData.thumbnail_500_url}
                   alt={imageData.title}
                   className="w-full h-full object-contain"
                   loading="eager"
                 />
               </div>
 
-              {/* CTA Button */}
               <a
                 href={adobeUrl}
                 target="_blank"
@@ -191,37 +173,31 @@ export default function StockImageRedirect() {
                 </svg>
               </a>
 
-              {/* Title */}
-              <h1 className="text-3xl font-bold leading-tight">
+              <h2 className="text-3xl font-bold leading-tight">
                 {imageData.title}
-              </h1>
+              </h2>
 
-              {/* Author and Category */}
               <div className="flex items-center justify-center gap-3 flex-wrap">
                 <span className="text-muted-foreground">
-                  by <span className="font-semibold text-foreground">{imageData.author}</span>
+                  by <span className="font-semibold text-foreground">{imageData.creator_name}</span>
                 </span>
                 <span className="text-muted-foreground">•</span>
-                <Badge variant="secondary">{imageData.category_hierarchy}</Badge>
-                <Badge variant="outline">{imageData.media_type_label}</Badge>
+                <Badge variant="secondary">{imageData.category?.name}</Badge>
               </div>
 
-              {/* Description */}
               <p className="text-muted-foreground leading-relaxed">
-                {imageData.meta_description}
+                {metaDescription}
               </p>
 
-              {/* Keywords */}
-              {imageData.keywords?.length > 0 && (
+              {keywordNames.length > 0 && (
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {imageData.keywords.slice(0, 10).map((keyword, index) => (
+                  {keywordNames.slice(0, 10).map((keyword, index) => (
                     <Badge key={index} variant="outline" className="text-xs">
                       {keyword}
                     </Badge>
                   ))}
                 </div>
               )}
-
             </div>
           ) : null}
         </div>
