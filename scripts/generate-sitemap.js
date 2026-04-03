@@ -27,21 +27,44 @@ const __dirname = path.dirname(__filename);
 // Configuration
 const BASE_URL = 'https://imgkey.lovable.app';
 const API_BASE_URL = 'https://st-apis.marwanto606.qzz.io/creator';
-const TOTAL_PAGES = 14; // 100 image per page
-const PUBLIC_DIR = path.join(__dirname, '../public');
+const ITEMS_PER_PAGE = 100;
+
 
 /**
- * Fetch all images from API
+ * Fetch all images from API (dynamic pagination based on nb_results)
  * @returns {Promise<Array>} Array of image objects
  */
 async function fetchAllImages() {
   console.log('🔄 Fetching images from API...');
   const allImages = [];
   
-  for (let page = 1; page <= TOTAL_PAGES; page++) {
+  // Fetch first page to get nb_results
+  const firstUrl = `${API_BASE_URL}?search_page=1`;
+  console.log(`  ↳ Fetching page 1 to determine total pages...`);
+  
+  const firstResponse = await fetch(firstUrl);
+  if (!firstResponse.ok) {
+    console.error(`  ✗ Failed to fetch page 1: ${firstResponse.status}`);
+    return allImages;
+  }
+  
+  const firstData = await firstResponse.json();
+  const totalItems = firstData.nb_results || 0;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  
+  console.log(`  ✓ Total items: ${totalItems}, Total pages: ${totalPages}`);
+  
+  // Process first page
+  if (firstData.files && Array.isArray(firstData.files)) {
+    allImages.push(...firstData.files);
+    console.log(`  ✓ Page 1/${totalPages}: ${firstData.files.length} images fetched`);
+  }
+  
+  // Fetch remaining pages
+  for (let page = 2; page <= totalPages; page++) {
     try {
       const url = `${API_BASE_URL}?search_page=${page}`;
-      console.log(`  ↳ Fetching page ${page}/${TOTAL_PAGES}...`);
+      console.log(`  ↳ Fetching page ${page}/${totalPages}...`);
       
       const response = await fetch(url);
       if (!response.ok) {
@@ -51,11 +74,9 @@ async function fetchAllImages() {
       
       const data = await response.json();
       
-      // Extract images from items object
-      if (data.items && typeof data.items === 'object') {
-        const images = Object.values(data.items);
-        allImages.push(...images);
-        console.log(`  ✓ Page ${page}: ${images.length} images fetched`);
+      if (data.files && Array.isArray(data.files)) {
+        allImages.push(...data.files);
+        console.log(`  ✓ Page ${page}/${totalPages}: ${data.files.length} images fetched`);
       }
     } catch (error) {
       console.error(`  ✗ Error fetching page ${page}:`, error.message);
@@ -100,13 +121,13 @@ function generateImagesSitemap(images) {
   
   const urlEntries = images.map((image) => {
     const imageData = {
-      thumbnailUrl: image.thumbnail_url || '',
+      thumbnailUrl: image.thumbnail_500_url || '',
       title: image.title || 'Stock Image',
-      caption: image.author_name ? `by ${image.author_name}` : '',
+      caption: image.creator_name ? `by ${image.creator_name}` : '',
     };
     
     return generateUrlEntry(
-      `${BASE_URL}/stock/${image.content_id}`,
+      `${BASE_URL}/stock/${image.id}`,
       currentDate,
       'weekly',
       0.7,
