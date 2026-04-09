@@ -30,7 +30,7 @@ export function ImageCard({ image }: ImageCardProps) {
         loading="lazy"
       />
       {/* Overlay - always visible on mobile, hover on desktop */}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-3 pt-10
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-3 pt-14
         opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
         <h3 className="text-sm font-semibold text-white line-clamp-2 leading-tight mb-1">
           {image.title}
