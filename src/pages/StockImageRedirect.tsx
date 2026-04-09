@@ -123,7 +123,7 @@ export default function StockImageRedirect() {
       </Helmet>
 
       <Header onSearch={() => {}} />
-      <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
+      <div className="flex items-center justify-center bg-background px-4 py-8">
         <div className="max-w-2xl w-full space-y-6">
           {isLoading ? (
             <div className="text-center space-y-4" data-nosnippet>
@@ -143,16 +143,6 @@ export default function StockImageRedirect() {
             </div>
           ) : imageData ? (
             <div className="space-y-6 text-center">
-              <a
-                href="/"
-                className="inline-flex items-center space-x-2 hover:opacity-80 transition-opacity"
-              >
-                <Camera className="h-8 w-8 text-primary" />
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent">
-                  ImgKey606
-                </h1>
-              </a>
-
               <div className="relative w-full aspect-video overflow-hidden rounded-lg border bg-muted">
                 <img
                   src={imageData.thumbnail_500_url}
