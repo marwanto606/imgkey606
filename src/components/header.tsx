@@ -29,52 +29,60 @@ export function Header({ onSearch }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <div className="flex items-center space-x-2">
+        {/* Logo + Navigation */}
+        <div className="hidden md:flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <Camera className="h-8 w-8 text-primary" />
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent">
+              ImgKey606
+            </h1>
+          </div>
+          <nav className="flex items-center space-x-4">
+            <a href="/" className="text-muted-foreground hover:text-foreground transition-colors">
+              Home
+            </a>
+            <a href="https://www.marwanto606.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+              Blog
+            </a>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground transition-colors px-2">
+                  Tools
+                  <ChevronDown className="h-4 w-4 ml-1" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="bg-background border">
+                <DropdownMenuItem asChild>
+                  <a href="/image-title-keyword" className="w-full">
+                    Gen title keyword
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="/image-prompt" className="w-full">
+                    Gen Image Prompt
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="/image-inspire" className="w-full">
+                    Image Inspire
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </nav>
+        </div>
+
+        {/* Mobile Logo */}
+        <div className="flex md:hidden items-center space-x-2">
           <Camera className="h-8 w-8 text-primary" />
           <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent">
             ImgKey606
           </h1>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
-          <a href="/" className="text-muted-foreground hover:text-foreground transition-colors">
-            Home
-          </a>
-          <a href="https://www.marwanto606.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
-            Blog
-          </a>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="text-muted-foreground hover:text-foreground transition-colors">
-                Tools
-                <ChevronDown className="h-4 w-4 ml-1" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="bg-background border">
-              <DropdownMenuItem asChild>
-                <a href="/image-title-keyword" className="w-full">
-                  Gen title keyword
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a href="/image-prompt" className="w-full">
-                  Gen Image Prompt
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a href="/image-inspire" className="w-full">
-                  Image Inspire
-                </a>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </nav>
-
-        {/* Search Form */}
-        <form onSubmit={handleSearch} className="hidden md:flex items-center space-x-2">
-          <div className="relative">
+        {/* Search + Theme Toggle */}
+        <div className="hidden md:flex items-center space-x-3">
+          <form onSubmit={handleSearch} className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="text"
@@ -83,14 +91,7 @@ export function Header({ onSearch }: HeaderProps) {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 w-64"
             />
-          </div>
-          <Button type="submit" size="sm">
-            Search
-          </Button>
-        </form>
-
-        {/* Desktop Actions */}
-        <div className="hidden md:flex items-center space-x-2">
+          </form>
           <ThemeToggle />
         </div>
 
