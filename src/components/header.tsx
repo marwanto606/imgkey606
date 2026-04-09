@@ -146,20 +146,15 @@ export function Header({ onSearch }: HeaderProps) {
             </nav>
 
             {/* Mobile Search */}
-            <form onSubmit={handleSearch} className="flex flex-col space-y-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Search stock images..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                Search
-              </Button>
+            <form onSubmit={handleSearch} className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search stock images..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
             </form>
           </div>
         </div>
