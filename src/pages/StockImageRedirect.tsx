@@ -1,6 +1,7 @@
 import { useParams, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Loader2, Camera, ShoppingCart } from "lucide-react";
+import { Loader2, ShoppingCart } from "lucide-react";
+import { Header } from "@/components/header";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 
@@ -121,6 +122,7 @@ export default function StockImageRedirect() {
         <link rel="canonical" href={`https://imgkey.lovable.app/stock/${id}`} />
       </Helmet>
 
+      <Header onSearch={() => {}} />
       <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
         <div className="max-w-2xl w-full space-y-6">
           {isLoading ? (
