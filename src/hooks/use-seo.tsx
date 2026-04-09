@@ -12,6 +12,8 @@ interface SEOConfig {
 
 export const useSEO = (config: SEOConfig) => {
   useEffect(() => {
+    const addedElements: Element[] = []
+
     // Set document title
     document.title = config.title
 
@@ -22,13 +24,15 @@ export const useSEO = (config: SEOConfig) => {
     }
 
     // Set meta keywords
-    const metaKeywords = document.querySelector('meta[name="keywords"]') || document.createElement('meta')
     if (config.keywords) {
-      metaKeywords.setAttribute('name', 'keywords')
-      metaKeywords.setAttribute('content', config.keywords)
-      if (!document.querySelector('meta[name="keywords"]')) {
+      let metaKeywords = document.querySelector('meta[name="keywords"]')
+      if (!metaKeywords) {
+        metaKeywords = document.createElement('meta')
+        metaKeywords.setAttribute('name', 'keywords')
         document.head.appendChild(metaKeywords)
+        addedElements.push(metaKeywords)
       }
+      metaKeywords.setAttribute('content', config.keywords)
     }
 
     // Set Open Graph title
@@ -58,24 +62,29 @@ export const useSEO = (config: SEOConfig) => {
         canonical = document.createElement('link')
         canonical.setAttribute('rel', 'canonical')
         document.head.appendChild(canonical)
+        addedElements.push(canonical)
       }
       canonical.setAttribute('href', config.canonical)
     }
 
     // Set Twitter meta tags
-    const twitterTitle = document.querySelector('meta[name="twitter:title"]') || document.createElement('meta')
-    twitterTitle.setAttribute('name', 'twitter:title')
-    twitterTitle.setAttribute('content', config.ogTitle || config.title)
-    if (!document.querySelector('meta[name="twitter:title"]')) {
+    let twitterTitle = document.querySelector('meta[name="twitter:title"]')
+    if (!twitterTitle) {
+      twitterTitle = document.createElement('meta')
+      twitterTitle.setAttribute('name', 'twitter:title')
       document.head.appendChild(twitterTitle)
+      addedElements.push(twitterTitle)
     }
+    twitterTitle.setAttribute('content', config.ogTitle || config.title)
 
-    const twitterDescription = document.querySelector('meta[name="twitter:description"]') || document.createElement('meta')
-    twitterDescription.setAttribute('name', 'twitter:description')
-    twitterDescription.setAttribute('content', config.ogDescription || config.description)
-    if (!document.querySelector('meta[name="twitter:description"]')) {
+    let twitterDescription = document.querySelector('meta[name="twitter:description"]')
+    if (!twitterDescription) {
+      twitterDescription = document.createElement('meta')
+      twitterDescription.setAttribute('name', 'twitter:description')
       document.head.appendChild(twitterDescription)
+      addedElements.push(twitterDescription)
     }
+    twitterDescription.setAttribute('content', config.ogDescription || config.description)
 
     // Add structured data for better SEO
     const structuredData = {
@@ -96,8 +105,13 @@ export const useSEO = (config: SEOConfig) => {
       jsonLd = document.createElement('script')
       jsonLd.setAttribute('type', 'application/ld+json')
       document.head.appendChild(jsonLd)
+      addedElements.push(jsonLd)
     }
     jsonLd.textContent = JSON.stringify(structuredData)
 
+    // Cleanup: remove dynamically added elements when unmounting
+    return () => {
+      addedElements.forEach(el => el.remove())
+    }
   }, [config])
 }
